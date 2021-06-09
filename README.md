@@ -4,6 +4,7 @@ You can find an example running on an ESP32 on VSPI [here](https://github.com/mo
 
 # Max86141
 Arduino codes and docs for using Max86140/Max86141 sensors
+The Select Slave Pin SS_Pin is **A5**.
 
 # Datasheet
 [MAX86140-MAX86141.pdf](https://github.com/MakerLabCRI/Max86141/files/6622271/MAX86140-MAX86141.pdf)
