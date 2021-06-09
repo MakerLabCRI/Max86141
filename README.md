@@ -1,7 +1,6 @@
 WORKING IN PROGRESS ! 
 The example provided is set up on NRF52840 board.    
 You can find an example running on an ESP32 on VSPI [here](https://github.com/moothyknight/MAX86141_Arduino).
-CELUI QUI A fait le partage depuis le nrf52 et esp32
 You can also find [here](https://github.com/prashnts) the github of our collaborator Prashant Sinha who shared with us informations about the Max86140/Max86141, the NRF52 and ESP32.  
 
 # Max86141
