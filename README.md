@@ -15,6 +15,6 @@ You can also find [here](https://github.com/prashnts) the github of our collabor
 
 ### Vector : Library Information
 > Name : Vector
-> Version : 1.2.1
-> URL : https://github.com/janelia-arduino/Vector
-> Author : Peter Polidoro
+<br/> Version : 1.2.1
+<br/> URL : https://github.com/janelia-arduino/Vector
+<br/> Author : Peter Polidoro
