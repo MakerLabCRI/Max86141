@@ -418,7 +418,6 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     temp &= ~0x02;
     write_reg(REG_MODE_CONFIG, temp);
 
-    
     //
     // Return REG_SYS_CNTRL which should be 0x00.
     //
@@ -731,95 +730,14 @@ else{
   Serial.println("FIFO not A_full");
 }
 }
-void MAX86141::fillBuffForSNR1(int i){
-  
-   uint8_t dataBuf[3072]; ///128 FIFO samples, 2 channels PPG, 3 bytes/channel, 2 number of sequences control (128*3*2*4)*2 = 3072 byte buffer
-   uint8_t sample_count = read_reg(REG_FIFO_DATA_COUNT); 
-   device_data_read(dataBuf, sample_count);//Data Read Routine 
- if(nb_ppg==1){
-   if(sample_count >= 1 && ledModeSize == 1) {
-      signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-     
-  }
-  else if (sample_count >= 2 && ledModeSize == 2){
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0];
-    
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-  }
-else if(sample_count >= 3 && ledModeSize == 3){
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
-}
-else if(sample_count >= 4 && ledModeSize == 4){
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
-    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
-}
-
-else if(sample_count >= 5 && ledModeSize == 5){
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
-    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
-    signalData_ledSeq3A_PPG1[i]= ledSeq3A_PPG1[0];
-}
-
-else {
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
-    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
-    signalData_ledSeq3A_PPG1[i]= ledSeq3A_PPG1[0];
-    signalData_ledSeq3B_PPG1[i]= ledSeq3B_PPG1[0];
-}
-
-}
-
-else{
-if(sample_count >= 2 && ledModeSize == 1) {
-      signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0];
-      signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0];
-     
-  }
-  else if (sample_count >= 4 && ledModeSize == 2){
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0]; 
-    signalData_ledSeq1B_PPG2[i]= ledSeq1B_PPG2[0];
-}
-else if(sample_count >= 6 && ledModeSize == 3){
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0];
-    signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0]; 
-    signalData_ledSeq1B_PPG2[i]= ledSeq1B_PPG2[0]; 
-    signalData_ledSeq2A_PPG2[i]= ledSeq2A_PPG2[0];
-     
-}
-//sample_count >= 4 && ledModeSize == 4
-else {
-    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
-    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
-    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
-    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
-    signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0]; 
-    signalData_ledSeq1B_PPG2[i]= ledSeq1B_PPG2[0]; 
-    signalData_ledSeq2A_PPG2[i]= ledSeq2A_PPG2[0]; 
-    signalData_ledSeq2B_PPG2[i]= ledSeq2B_PPG2[0];
-}
-
-}
-}
 
 
 //axis=0, freedom degre=0
-float MAX86141::signaltonoise(int *signalBuff, int len){
+float MAX86141::signaltonoise(Elements signalBuff, int len){
   // STEP 1, FIND THE MEAN.
    long sum = 0L ;  // sum will be larger than an item, long for safety.
-  for (int i = 0 ; i < len ; i++) {
-    sum += signalBuff[i] ;}
+  for (int i : signalBuff) {
+    sum += i ;}
     float mean = sum/(float)len;
 
    // STEP 2, sum the squares of the differences from the mean
