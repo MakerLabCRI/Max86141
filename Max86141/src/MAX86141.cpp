@@ -1,3 +1,4 @@
+
 #include "MAX86141.h"
 
 /*write to register function*/
@@ -103,6 +104,9 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     int* MAX86141::getLedMode(){
       return ledMode;
     }
+    int MAX86141::getNbLeds(){
+      return number_leds;
+    }
     int MAX86141::getIntensityLed(){
       return intensity_led;
     }
@@ -118,54 +122,80 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     int MAX86141::getADCRange(){
       return adcRange;
     }
-    int* MAX86141::getLED1(){
-      return led1;
+     int* MAX86141::get_ledSeq1A_PPG1(){
+      return ledSeq1A_PPG1;
+     }
+     int* MAX86141::get_tagSeq1A_PPG1(){
+      return tagSeq1A_PPG1;
+     }
+
+    int* MAX86141::get_ledSeq1B_PPG1(){
+     return ledSeq1B_PPG1;
     }
-    int* MAX86141::getLED2(){
-      return led2;
+    int* MAX86141::get_tagSeq1B_PPG1(){
+      return tagSeq1B_PPG1;
     }
-    int* MAX86141::getLED3(){
-      return led3;
+    int* MAX86141::get_ledSeq2A_PPG1(){
+      return ledSeq2A_PPG1;
+      }
+    int* MAX86141::get_tagSeq2A_PPG1(){
+      return tagSeq2A_PPG1;
     }
-    int* MAX86141::getLED4(){
-      return led4;
+    int* MAX86141::get_ledSeq2B_PPG1(){
+      return ledSeq2B_PPG1;
+      } 
+    int* MAX86141::get_tagSeq2B_PPG1(){
+      return tagSeq2B_PPG1;
     }
-    int* MAX86141::getLED5(){
-      return led5;
+    int* MAX86141::get_ledSeq3A_PPG1(){
+      return ledSeq3A_PPG1;
+      }
+    int* MAX86141::get_tagSeq3A_PPG1(){
+      return tagSeq3A_PPG1;
+      }
+    int* MAX86141::get_ledSeq3B_PPG1(){
+      return ledSeq3B_PPG1;
+      }
+    int* MAX86141::get_tagSeq3B_PPG1(){
+      return tagSeq3B_PPG1;
     }
-    int* MAX86141::getLED6(){
-      return led6;
+
+    int* MAX86141::get_ledSeq1A_PPG2(){
+      return ledSeq1A_PPG2;
+      } 
+    int* MAX86141::get_tagSeq1A_PPG2(){
+      return tagSeq1A_PPG2;
     }
-    int* MAX86141::getLED7(){
-      return led7;
+    int* MAX86141::get_ledSeq1B_PPG2(){
+      return ledSeq1B_PPG2;
     }
-    int* MAX86141::getLED8(){
-      return led8;
+    int* MAX86141::get_tagSeq1B_PPG2(){
+      return tagSeq1B_PPG2;
+      }
+    int* MAX86141::get_ledSeq2A_PPG2(){
+      return ledSeq2A_PPG2;
     }
-    int* MAX86141::getTag1(){
-      return tag1;
+    int* MAX86141::get_tagSeq2A_PPG2(){
+      return tagSeq2A_PPG2;
     }
-    int* MAX86141::getTag2(){
-      return tag2;
-    }
-    int* MAX86141::getTag3(){
-      return tag3;
-    }
-    int* MAX86141::getTag4(){
-      return tag4;
-    }
-    int* MAX86141::getTag5(){
-      return tag5;
-    }
-    int* MAX86141::getTag6(){
-      return tag6;
-    }
-    int* MAX86141::getTag7(){
-      return tag7;
-    }
-    int* MAX86141::getTag8(){
-      return tag8;
-    }
+    int* MAX86141::get_ledSeq2B_PPG2(){
+      return ledSeq2B_PPG2;
+      } 
+    int* MAX86141::get_tagSeq2B_PPG2(){
+      return tagSeq2B_PPG2;
+      }
+    int* MAX86141::get_ledSeq3A_PPG2(){
+      return ledSeq3A_PPG2;
+      } 
+    int* MAX86141::get_tagSeq3A_PPG2(){
+      return tagSeq3A_PPG2;
+      }
+    int* MAX86141::get_ledSeq3B_PPG2(){
+      return ledSeq3B_PPG2;
+      }
+    int* MAX86141::get_tagSeq3B_PPG2(){
+      return tagSeq3B_PPG2;
+      }
 ////////////////////////////////////////
 
 ////////////// SETs ///////////////////////////
@@ -239,26 +269,31 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       }
       
     }
+    void MAX86141::setNumLeds(int nb_leds){
+      number_leds = nb_leds;
+    }
     void MAX86141::setIntensityLed(int intens_led){
       intensity_led= intens_led;
       
-      if(ledModeSize==1){
+      if( number_leds== 1){
       write_reg(REG_LED_RANGE_1, 0b00000011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-      write_reg(REG_LED1_PA, intensity_led);}
-      
-      else if(ledModeSize==2){
+      write_reg(REG_LED1_PA, intensity_led);
+      }
+      else if( number_leds== 2){
       write_reg(REG_LED_RANGE_1, 0b00001111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-      write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
-    write_reg(REG_LED2_PA, intensity_led);}
+      write_reg(REG_LED1_PA, intensity_led);
+      write_reg(REG_LED2_PA, intensity_led);
+      }
+      else if( number_leds== 3){
+      write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
+      write_reg(REG_LED1_PA, intensity_led);
+      write_reg(REG_LED2_PA, intensity_led);
+      write_reg(REG_LED3_PA, intensity_led);
+      }
+      
+  
     
-    else if(ledModeSize==3){
-    write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-    write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
-    write_reg(REG_LED2_PA, intensity_led);
-    write_reg(REG_LED3_PA, intensity_led);
-    }
-    
-    else if(ledModeSize==4){
+    else if(number_leds==4){
     write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
     write_reg(REG_LED_RANGE_2, 0b00000011); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
     write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
@@ -267,7 +302,7 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     write_reg(REG_LED4_PA, intensity_led);
     }
 
-    else if(ledModeSize==5){
+    else if(number_leds==5){
     write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
     write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
     write_reg(REG_LED1_PA, intensity_led); // 0 = 0mA, 255 = Max mA
@@ -301,13 +336,16 @@ uint8_t MAX86141::read_reg(uint8_t address) {
 ///////////////////////////////////////////////
 
 /*inspired by pseudo-code available on MAX86141 datasheet for initialisation*/
- void MAX86141::initialisation(int ppg, int *ledMd, int size_led, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int newSpiClk=10000)
+ void MAX86141::initialisation(int ppg, int *ledMd, int size_led, int nb_leds, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int newSpiClk=10000)
  {
       setSpiClk(newSpiClk);
           uint8_t temp;
+          
       write_reg(REG_MODE_CONFIG, 0x01);
       delay(10);
+      
       setNumbPPG(ppg);
+      setNumLeds(nb_leds);
       setLedModeSize(size_led);
      // write_reg(REG_PICKET_FENCE,0b11000000);
 
@@ -363,8 +401,9 @@ uint8_t MAX86141::read_reg(uint8_t address) {
 
       // Configure FIFO.
        write_reg(REG_FIFO_CONFIG_1, 128 - 6);
-    write_reg(REG_FIFO_CONFIG_2, 0b00001101);
-
+    //write_reg(REG_FIFO_CONFIG_2, 0b00001101);
+      write_reg(REG_FIFO_CONFIG_2, 0b00000010);
+  
           setLedMode(ledMd);
 
 //
@@ -379,12 +418,7 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     temp &= ~0x02;
     write_reg(REG_MODE_CONFIG, temp);
 
-    //
-    // Clear interrupts.
-    //
-    read_reg(REG_INT_STAT_1);
-    read_reg(REG_INT_STAT_2);
-
+    
     //
     // Return REG_SYS_CNTRL which should be 0x00.
     //
@@ -395,15 +429,16 @@ uint8_t MAX86141::read_reg(uint8_t address) {
 
 
 /* inspired by pseudo-code available on MAX86141 datasheet */
-void MAX86141::device_data_read(uint8_t *dataBuf)
+void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
 {
     uint8_t sample_count;
     uint8_t reg_val;
     // uint8_t dataBuf[6144]; ///128 FIFO samples, 2 channels, 2 PDs, 3 bytes/channel, 4 Leds sequence control (128*3*2*4)*2 = 6144 byte buffer
     //uint8_t dataBuf[1152]; ///128 FIFO samples, 3 channels, 1 PDs, 3 bytes/channel 128*3*1*3 = 1152 byte buffer
     // uint8_t dataBuf[768]; ///128 FIFO samples, 2 channels, 1 PDs, 3 bytes/channel 128*3*2*3 = 2304 byte buffer
-    sample_count = read_reg(REG_FIFO_DATA_COUNT); //number of items available in FIFO to read
-
+    //sample_count = read_reg(REG_FIFO_DATA_COUNT); //number of items available in FIFO to read
+    sample_count =  items_fifo;
+    
     if(debug == true){
         Serial.print("Sample Count: ");
         Serial.println(sample_count);
@@ -419,8 +454,8 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*3+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*3+0] << 16) | (dataBuf[i*3+1] << 8) | (dataBuf[i*3+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*3+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*3+0] << 16) | (dataBuf[i*3+1] << 8) | (dataBuf[i*3+2])) & 0x7ffff;
     }
    }
 
@@ -430,11 +465,11 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
         
     }
    }
@@ -446,14 +481,14 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*9+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*9+0] << 16) | (dataBuf[i*9+1] << 8) | (dataBuf[i*9+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*9+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*9+0] << 16) | (dataBuf[i*9+1] << 8) | (dataBuf[i*9+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*9+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*9+3] << 16) | (dataBuf[i*9+4] << 8) | (dataBuf[i*9+5])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*9+3] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*9+3] << 16) | (dataBuf[i*9+4] << 8) | (dataBuf[i*9+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*9+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*9+6] << 16) | (dataBuf[i*9+7] << 8) | (dataBuf[i*9+8])) & 0x7ffff;
+        tagSeq2A_PPG1[i] = (dataBuf[i*9+6] >> 3) & 0x1f;
+        ledSeq2A_PPG1[i] = ((dataBuf[i*9+6] << 16) | (dataBuf[i*9+7] << 8) | (dataBuf[i*9+8])) & 0x7ffff;
     }
        }
 
@@ -464,17 +499,17 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*12+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
+        tagSeq2A_PPG1 [i] = (dataBuf[i*12+6] >> 3) & 0x1f;
+        ledSeq2A_PPG1[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
 
-        tag4[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
-        led4[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
+        tagSeq2B_PPG1[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
+        ledSeq2B_PPG1[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
     }
        }
 
@@ -485,20 +520,20 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*15+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*15+0] << 16) | (dataBuf[i*15+1] << 8) | (dataBuf[i*15+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*15+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*15+0] << 16) | (dataBuf[i*15+1] << 8) | (dataBuf[i*15+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*15+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*15+3] << 16) | (dataBuf[i*15+4] << 8) | (dataBuf[i*15+5])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*15+3] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*15+3] << 16) | (dataBuf[i*15+4] << 8) | (dataBuf[i*15+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*15+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*15+6] << 16) | (dataBuf[i*15+7] << 8) | (dataBuf[i*15+8])) & 0x7ffff;
+        tagSeq2A_PPG1[i] = (dataBuf[i*15+6] >> 3) & 0x1f;
+        ledSeq2A_PPG1[i] = ((dataBuf[i*15+6] << 16) | (dataBuf[i*15+7] << 8) | (dataBuf[i*15+8])) & 0x7ffff;
 
-        tag4[i] = (dataBuf[i*15+9] >> 3) & 0x1f;
-        led4[i] = ((dataBuf[i*15+9] << 16) | (dataBuf[i*15+10] << 8) | (dataBuf[i*15+11])) & 0x7ffff;
+        tagSeq2B_PPG1[i] = (dataBuf[i*15+9] >> 3) & 0x1f;
+        ledSeq2B_PPG1[i] = ((dataBuf[i*15+9] << 16) | (dataBuf[i*15+10] << 8) | (dataBuf[i*15+11])) & 0x7ffff;
 
-        tag5[i] = (dataBuf[i*15+12] >> 3) & 0x1f;
-        led5[i] = ((dataBuf[i*15+12] << 16) | (dataBuf[i*15+13] << 8) | (dataBuf[i*15+14])) & 0x7ffff;
+        tagSeq3A_PPG1[i] = (dataBuf[i*15+12] >> 3) & 0x1f;
+        ledSeq3A_PPG1[i] = ((dataBuf[i*15+12] << 16) | (dataBuf[i*15+13] << 8) | (dataBuf[i*15+14])) & 0x7ffff;
         
     }
        }
@@ -510,23 +545,23 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
+        tagSeq2A_PPG1[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
+        ledSeq2A_PPG1[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
 
-        tag4[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
-        led4[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
+        tagSeq2B_PPG1[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
+        ledSeq2B_PPG1[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
 
-        tag5[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
-        led5[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
+        tagSeq3A_PPG1[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
+        ledSeq3A_PPG1[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
 
-        tag6[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
-        led6[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
+        tagSeq3B_PPG1[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
+        ledSeq3B_PPG1[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
         
     }
        }}
@@ -536,11 +571,11 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
+        tagSeq1A_PPG2[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
+        ledSeq1A_PPG2[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
         
     }
    }
@@ -551,17 +586,17 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
+        tagSeq1A_PPG2[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
+        ledSeq1A_PPG2[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*12+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*12+6] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
 
-        tag4[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
-        led4[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
+        tagSeq1B_PPG2[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
+        ledSeq1B_PPG2[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
         
     }
    }
@@ -573,23 +608,23 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
+        tagSeq1A_PPG2[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
+        ledSeq1A_PPG2[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
 
-        tag4[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
-        led4[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
+        tagSeq1B_PPG2[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
+        ledSeq1B_PPG2[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
 
-        tag5[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
-        led5[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
+        tagSeq2A_PPG1[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
+        ledSeq2A_PPG1[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
 
-        tag6[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
-        led6[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
+        tagSeq2A_PPG2[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
+        ledSeq2A_PPG2[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
     }
        }
            if(ledModeSize==4){
@@ -598,29 +633,29 @@ void MAX86141::device_data_read(uint8_t *dataBuf)
 
     for (i = 0; i < sample_count; i++)
     {
-        tag1[i] = (dataBuf[i*24+0] >> 3) & 0x1f;
-        led1[i] = ((dataBuf[i*24+0] << 16) | (dataBuf[i*24+1] << 8) | (dataBuf[i*24+2])) & 0x7ffff;
+        tagSeq1A_PPG1[i] = (dataBuf[i*24+0] >> 3) & 0x1f;
+        ledSeq1A_PPG1[i] = ((dataBuf[i*24+0] << 16) | (dataBuf[i*24+1] << 8) | (dataBuf[i*24+2])) & 0x7ffff;
 
-        tag2[i] = (dataBuf[i*24+3] >> 3) & 0x1f;
-        led2[i] = ((dataBuf[i*24+3] << 16) | (dataBuf[i*24+4] << 8) | (dataBuf[i*24+5])) & 0x7ffff;
+        tagSeq1A_PPG2[i] = (dataBuf[i*24+3] >> 3) & 0x1f;
+        ledSeq1A_PPG2[i] = ((dataBuf[i*24+3] << 16) | (dataBuf[i*24+4] << 8) | (dataBuf[i*24+5])) & 0x7ffff;
 
-        tag3[i] = (dataBuf[i*24+6] >> 3) & 0x1f;
-        led3[i] = ((dataBuf[i*24+6] << 16) | (dataBuf[i*24+7] << 8) | (dataBuf[i*24+8])) & 0x7ffff;
+        tagSeq1B_PPG1[i] = (dataBuf[i*24+6] >> 3) & 0x1f;
+        ledSeq1B_PPG1[i] = ((dataBuf[i*24+6] << 16) | (dataBuf[i*24+7] << 8) | (dataBuf[i*24+8])) & 0x7ffff;
 
-        tag4[i] = (dataBuf[i*24+9] >> 3) & 0x1f;
-        led4[i] = ((dataBuf[i*24+9] << 16) | (dataBuf[i*24+10] << 8) | (dataBuf[i*24+11])) & 0x7ffff;
+        tagSeq1B_PPG2[i] = (dataBuf[i*24+9] >> 3) & 0x1f;
+        ledSeq1B_PPG2[i] = ((dataBuf[i*24+9] << 16) | (dataBuf[i*24+10] << 8) | (dataBuf[i*24+11])) & 0x7ffff;
 
-        tag5[i] = (dataBuf[i*24+12] >> 3) & 0x1f;
-        led5[i] = ((dataBuf[i*24+12] << 16) | (dataBuf[i*24+13] << 8) | (dataBuf[i*24+14])) & 0x7ffff;
+        tagSeq2A_PPG1[i] = (dataBuf[i*24+12] >> 3) & 0x1f;
+        ledSeq2A_PPG1[i] = ((dataBuf[i*24+12] << 16) | (dataBuf[i*24+13] << 8) | (dataBuf[i*24+14])) & 0x7ffff;
 
-        tag6[i] = (dataBuf[i*24+15] >> 3) & 0x1f;
-        led6[i] = ((dataBuf[i*24+15] << 16) | (dataBuf[i*24+16] << 8) | (dataBuf[i*24+17])) & 0x7ffff;
+        tagSeq2A_PPG2[i] = (dataBuf[i*24+15] >> 3) & 0x1f;
+        ledSeq2A_PPG2[i] = ((dataBuf[i*24+15] << 16) | (dataBuf[i*24+16] << 8) | (dataBuf[i*24+17])) & 0x7ffff;
 
-        tag7[i] = (dataBuf[i*24+18] >> 3) & 0x1f;
-        led7[i] = ((dataBuf[i*24+18] << 16) | (dataBuf[i*24+19] << 8) | (dataBuf[i*24+20])) & 0x7ffff;
+        tagSeq2B_PPG1[i] = (dataBuf[i*24+18] >> 3) & 0x1f;
+        ledSeq2B_PPG1[i] = ((dataBuf[i*24+18] << 16) | (dataBuf[i*24+19] << 8) | (dataBuf[i*24+20])) & 0x7ffff;
 
-        tag8[i] = (dataBuf[i*24+21] >> 3) & 0x1f;
-        led8[i] = ((dataBuf[i*24+21] << 16) | (dataBuf[i*24+22] << 8) | (dataBuf[i*24+23])) & 0x7ffff;
+        tagSeq2B_PPG2[i] = (dataBuf[i*24+21] >> 3) & 0x1f;
+        ledSeq2B_PPG2[i] = ((dataBuf[i*24+21] << 16) | (dataBuf[i*24+22] << 8) | (dataBuf[i*24+23])) & 0x7ffff;
     }
        }
 }
@@ -680,4 +715,123 @@ void MAX86141::clearInt() {
     uint16_t intr = 0x00;
     intr = read_reg(REG_INT_STAT_1) << 8;
     intr |= read_reg(REG_INT_STAT_2);
+}
+
+void MAX86141::irqHandler(void)
+{
+      uint8_t intStatus;
+//Read Status
+intStatus = read_reg(REG_INT_STAT_1);
+if ( intStatus & 0x80 ) { //A FULL RDY
+//device_data_read(); //Data Read Routine 
+int a_full = read_reg(0x09);
+    Serial.println("Fifo size "+String(a_full));
+}
+else{
+  Serial.println("FIFO not A_full");
+}
+}
+void MAX86141::fillBuffForSNR1(int i){
+  
+   uint8_t dataBuf[3072]; ///128 FIFO samples, 2 channels PPG, 3 bytes/channel, 2 number of sequences control (128*3*2*4)*2 = 3072 byte buffer
+   uint8_t sample_count = read_reg(REG_FIFO_DATA_COUNT); 
+   device_data_read(dataBuf, sample_count);//Data Read Routine 
+ if(nb_ppg==1){
+   if(sample_count >= 1 && ledModeSize == 1) {
+      signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+     
+  }
+  else if (sample_count >= 2 && ledModeSize == 2){
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0];
+    
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+  }
+else if(sample_count >= 3 && ledModeSize == 3){
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
+}
+else if(sample_count >= 4 && ledModeSize == 4){
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
+    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
+}
+
+else if(sample_count >= 5 && ledModeSize == 5){
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
+    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
+    signalData_ledSeq3A_PPG1[i]= ledSeq3A_PPG1[0];
+}
+
+else {
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
+    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
+    signalData_ledSeq3A_PPG1[i]= ledSeq3A_PPG1[0];
+    signalData_ledSeq3B_PPG1[i]= ledSeq3B_PPG1[0];
+}
+
+}
+
+else{
+if(sample_count >= 2 && ledModeSize == 1) {
+      signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0];
+      signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0];
+     
+  }
+  else if (sample_count >= 4 && ledModeSize == 2){
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0]; 
+    signalData_ledSeq1B_PPG2[i]= ledSeq1B_PPG2[0];
+}
+else if(sample_count >= 6 && ledModeSize == 3){
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0];
+    signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0]; 
+    signalData_ledSeq1B_PPG2[i]= ledSeq1B_PPG2[0]; 
+    signalData_ledSeq2A_PPG2[i]= ledSeq2A_PPG2[0];
+     
+}
+//sample_count >= 4 && ledModeSize == 4
+else {
+    signalData_ledSeq1A_PPG1[i]= ledSeq1A_PPG1[0]; 
+    signalData_ledSeq1B_PPG1[i]= ledSeq1B_PPG1[0]; 
+    signalData_ledSeq2A_PPG1[i]= ledSeq2A_PPG1[0]; 
+    signalData_ledSeq2B_PPG1[i]= ledSeq2B_PPG1[0];
+    signalData_ledSeq1A_PPG2[i]= ledSeq1A_PPG2[0]; 
+    signalData_ledSeq1B_PPG2[i]= ledSeq1B_PPG2[0]; 
+    signalData_ledSeq2A_PPG2[i]= ledSeq2A_PPG2[0]; 
+    signalData_ledSeq2B_PPG2[i]= ledSeq2B_PPG2[0];
+}
+
+}
+}
+
+
+//axis=0, freedom degre=0
+float MAX86141::signaltonoise(int *signalBuff, int len){
+  // STEP 1, FIND THE MEAN.
+   long sum = 0L ;  // sum will be larger than an item, long for safety.
+  for (int i = 0 ; i < len ; i++) {
+    sum += signalBuff[i] ;}
+    float mean = sum/(float)len;
+
+   // STEP 2, sum the squares of the differences from the mean
+   float sqDevSum = 0.0;
+  for(int i = 0; i < len; i++) {
+    // pow(x, 2) is x squared.
+    sqDevSum += pow((mean - float(signalBuff[i])), 2);
+  }
+
+   // STEP 3, FIND THE MEAN OF THAT
+  // STEP 4, TAKE THE SQUARE ROOT OF THAT
+   float stDev = sqrt(sqDevSum/float(len));
+   
+   return (float)20*log10(abs(mean/stDev));
 }
