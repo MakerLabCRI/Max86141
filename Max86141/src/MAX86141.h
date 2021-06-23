@@ -37,6 +37,13 @@
 * ownership rights.
 *******************************************************************************
 */
+
+///////// VECTOR /////////////
+#include <Arduino.h>
+#include <Streaming.h>
+#include <Vector.h>
+/////////////////////////////
+
 #if ARDUINO >= 100
  #include "Arduino.h"
 #else
@@ -247,7 +254,7 @@ WRITE LEDC5[3:0] to 0x0;
 WRITE LEDC6[3:0] to 0x0;
 WRITE SHDN[0] to 0x0; // Start Sampling STOP;
 */
-#define SIZE 50
+#define SIZE 25
 
 
 class MAX86141 {
@@ -261,17 +268,16 @@ class MAX86141 {
     int spiClk = 1000000; //8MHz clock on MAX86141 Max, only 200KHz necessary.
     bool debug = false;
     
-    long startTime;
-    byte samplesTaken = 0; //Counter for calculating the Hz or read rate
+    //Buffer to store data for using SNR (Signal to Noise Ratio)   
+    typedef Vector<int> Elements;
+    int storage_array[SIZE];
+    Elements signalData_ledSeq1A_PPG1, signalData_ledSeq1B_PPG1, signalData_ledSeq2A_PPG1, signalData_ledSeq2B_PPG1;
+    Elements signalData_ledSeq3A_PPG1, signalData_ledSeq3B_PPG1;
+    Elements signalData_ledSeq1A_PPG2, signalData_ledSeq1B_PPG2, signalData_ledSeq2A_PPG2, signalData_ledSeq2B_PPG2;
+    Elements signalData_ledSeq3A_PPG2, signalData_ledSeq3B_PPG2;
 
-    //Buffer to store data for using SNR (Signal to Noise Ratio)
-    int signalData_ledSeq1A_PPG1[SIZE], signalData_ledSeq1B_PPG1[SIZE], signalData_ledSeq2A_PPG1[SIZE], signalData_ledSeq2B_PPG1[SIZE];
-    int signalData_ledSeq3A_PPG1[SIZE], signalData_ledSeq3B_PPG1[SIZE];
-    int signalData_ledSeq1A_PPG2[SIZE], signalData_ledSeq1B_PPG2[SIZE], signalData_ledSeq2A_PPG2[SIZE], signalData_ledSeq2B_PPG2[SIZE];
-    int signalData_ledSeq3A_PPG2[SIZE], signalData_ledSeq3B_PPG2[SIZE];
-
-    //Function
-    float signaltonoise(int *signalBuff, int len);
+    // SNR Function
+    float signaltonoise(Elements signalBuff, int len);
     
     //Functions
     void init(int setSpiClk);
