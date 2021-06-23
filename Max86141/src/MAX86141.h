@@ -124,11 +124,9 @@ Each byte register is 8 bits wide
 EX. vspi->transfer(0x01,0b01010101) sends the binary data to the register. Hex bytes are binary shorthand
 and the register applies the binary in reverse order where the index is 0b[7,6,5,4,3,2,1,0]
 The datasheet describes all of the parameters you can enter.
-
 Note: If a sample rate is set that can not be supported by the selected pulse width and number of exposures per sample, then
 the highest available sample rate will be automatically set. The user can read back this register to confirm the sample rate.
 ADC Output is 18 bits. Number of exposures controlled in LED sequence registers (1 to 6)
-
 PPG_SR (sampling rate).
 Hex         SPS     Pulses per Sample
 0x0A        8       1
@@ -141,7 +139,6 @@ Hex         SPS     Pulses per Sample
 0x11        1024    1
 0x12        2048    1
 0x13        4096    1
-
 0x00        25      1
 0x01        50      1
 0x02        84      1
@@ -152,7 +149,6 @@ Hex         SPS     Pulses per Sample
 0x07        50      2
 0x08        84      2
 0x09        100     2
-
 Sample Average SMP_AVE
 Hex     Sample Average
 0x0     1
@@ -163,21 +159,18 @@ Hex     Sample Average
 0x5     32
 0x6     64
 0x7     128
-
 ADC Full Scale Input Current ADC_RGE
 Hex     Amps
 0x0     4.0uA
 0x1     8.0uA
 0x2     16.0uA
 0x3     32.0uA
-
 Integration time PPG_TINT
 Hex     Time
 0x0     14.8uS
 0x1     29.4uS
 0x2     58.7uS
 0x3     117.3uS
-
 LED settings (4 bit address options for REG_LED_SEQ 1, 2, and 3)
 Data outputted in order of setting, then anything set to 0x00 won't be outputted to free up the FIFO for more data.
 Bin     Setting
@@ -194,28 +187,24 @@ Bin     Setting
 1010    LED4 (external mux)
 1011    LED5 (external mux)
 1100    LED6 (external mux)
-
 LED Amplitude Range LEDx_RGE (LEDx_PA = 0xFF) - not sure how to set this.
 Hex     Amps
 0x0     31mA
 0x1     62mA
 0x2     93mA
 0x3     124mA
-
 LED Settling LED_SETLNG
 bits    Time    
 00      4uS
 01      6uS (default)
 10      8uS
 11      12uS
-
 Photo Diode Bias REG_PDIODE_BIAS
 Hex         Photo Diode Capacitance
 0x001       0pF to 65pF
 0x101       65pF to 130pF
 0x110       130pF to 260pF
 0x111       260pF to 520pF
-
 Select digital filter type DIG_FILT_SEL 
 0x0     Use CDM
 0x1     Use FDM
@@ -258,29 +247,39 @@ WRITE LEDC5[3:0] to 0x0;
 WRITE LEDC6[3:0] to 0x0;
 WRITE SHDN[0] to 0x0; // Start Sampling STOP;
 */
+#define SIZE 50
 
 
 class MAX86141 {
 
   public:
 
- void initialisation(int ppg, int *ledMd, int size_led, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int spiClk);
+ void initialisation(int ppg, int *ledMd, int size_led, int nb_leds, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int spiClk);
     //THESE NEED TO BE SET UP MANUALLY
     SPIClass * spi = NULL;
     int SS;
     int spiClk = 1000000; //8MHz clock on MAX86141 Max, only 200KHz necessary.
     bool debug = false;
     
-   
-    
+    long startTime;
+    byte samplesTaken = 0; //Counter for calculating the Hz or read rate
 
+    //Buffer to store data for using SNR (Signal to Noise Ratio)
+    int signalData_ledSeq1A_PPG1[SIZE], signalData_ledSeq1B_PPG1[SIZE], signalData_ledSeq2A_PPG1[SIZE], signalData_ledSeq2B_PPG1[SIZE];
+    int signalData_ledSeq3A_PPG1[SIZE], signalData_ledSeq3B_PPG1[SIZE];
+    int signalData_ledSeq1A_PPG2[SIZE], signalData_ledSeq1B_PPG2[SIZE], signalData_ledSeq2A_PPG2[SIZE], signalData_ledSeq2B_PPG2[SIZE];
+    int signalData_ledSeq3A_PPG2[SIZE], signalData_ledSeq3B_PPG2[SIZE];
+
+    //Function
+    float signaltonoise(int *signalBuff, int len);
+    
     //Functions
     void init(int setSpiClk);
     void write_reg(uint8_t address, uint8_t data_in);
     uint8_t read_reg(uint8_t address);
     void fifo_intr();
     void read_fifo(uint8_t data_buffer[], uint8_t count);
-    void device_data_read(uint8_t *dataBuf);
+    void device_data_read(uint8_t *dataBuf,uint8_t items_fifo);
     void setSS(int pin);
     void setSPI(SPIClass * newspi);
     void setSpiClk(int newSpiClk);
@@ -289,51 +288,69 @@ class MAX86141 {
     
     void setNumbPPG(int ppg);
     void setLedMode(int *ledMd);
+    void setNumLeds(int nb_leds);
     void setIntensityLed(int intens_led);
     void setSample(int smpl_avr, int smpl_rate);
     void setPulseWidth(int pulse);
     void setADCrange(int adc);
     void setLedModeSize(int size_led);
-
+    
+    void irqHandler(void);
+    void fillBuffForSNR(int i);
+    void fillBuffForSNR1(int i);
     
     int getledModeSize();
     int getNbPPG();
     int* getLedMode();
+    int getNbLeds();
     int getIntensityLed();
     int getSample_average();
     int getSample_rate();
     int getPulse_width();
     int getADCRange();
+ 
+    int* get_ledSeq1A_PPG1();
+    int* get_tagSeq1A_PPG1();
+    int* get_ledSeq1B_PPG1();
+    int* get_tagSeq1B_PPG1();
+    int* get_ledSeq2A_PPG1();
+    int* get_tagSeq2A_PPG1();
+    int* get_ledSeq2B_PPG1();
+    int* get_tagSeq2B_PPG1();
+    int* get_ledSeq3A_PPG1();
+    int* get_tagSeq3A_PPG1();
+    int* get_ledSeq3B_PPG1();
+    int* get_tagSeq3B_PPG1();
+    int* get_ledSeq1A_PPG2();
+    int* get_tagSeq1A_PPG2();
+    int* get_ledSeq1B_PPG2();
+    int* get_tagSeq1B_PPG2();
+    int* get_ledSeq2A_PPG2();
+    int* get_tagSeq2A_PPG2();
+    int* get_ledSeq2B_PPG2(); 
+    int* get_tagSeq2B_PPG2();
+    int* get_ledSeq3A_PPG2();
+    int* get_tagSeq3A_PPG2();
+    int* get_ledSeq3B_PPG2();
+    int* get_tagSeq3B_PPG2();
     
-    int* getLED1();
-    int* getLED2();
-    int* getLED3();
-    int* getLED4();
-    int* getLED5();
-    int* getLED6();
-    int* getLED7();
-    int* getLED8();
-
-    int* getTag1();
-    int* getTag2();
-    int* getTag3();
-    int* getTag4();
-    int* getTag5();
-    int* getTag6();
-    int* getTag7();
-    int* getTag8();
-
     private :
+     
+    // Seq1A_PPG1 : Sequence control 1 A (0-3 bits) PPG1 
+    // Seq1B_PPG2 : Sequence control 1 B (4-7 bits) PPG2
+    int ledSeq1A_PPG1[128], tagSeq1A_PPG1[128];
+    int ledSeq1B_PPG1[128], tagSeq1B_PPG1[128];
+    int ledSeq2A_PPG1[128], tagSeq2A_PPG1[128];
+    int ledSeq2B_PPG1[128], tagSeq2B_PPG1[128];
+    int ledSeq3A_PPG1[128], tagSeq3A_PPG1[128];
+    int ledSeq3B_PPG1[128], tagSeq3B_PPG1[128];
 
-    int led1[128], tag1[128];
-    int led2[128], tag2[128];
-    int led3[128], tag3[128];
-    int led4[128], tag4[128];
-    int led5[128], tag5[128];
-    int led6[128], tag6[128];
-    int led7[128], tag7[128];
-    int led8[128], tag8[128];
-
+    int ledSeq1A_PPG2[128], tagSeq1A_PPG2[128];
+    int ledSeq1B_PPG2[128], tagSeq1B_PPG2[128];
+    int ledSeq2A_PPG2[128], tagSeq2A_PPG2[128];
+    int ledSeq2B_PPG2[128], tagSeq2B_PPG2[128];
+    int ledSeq3A_PPG2[128], tagSeq3A_PPG2[128];
+    int ledSeq3B_PPG2[128], tagSeq3B_PPG2[128];
     
     uint8_t       m_tx_buf[3];                       /**< TX buffer. */
     uint8_t       m_rx_buf[3];                       /**< RX buffer. */
@@ -342,6 +359,7 @@ class MAX86141 {
     int ledModeSize;
     int nb_ppg;
     int *ledMode;
+    int number_leds;
     int intensity_led;
     int sample_average;
     int sample_rate;
