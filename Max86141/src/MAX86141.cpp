@@ -341,7 +341,7 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       setSpiClk(newSpiClk);
           uint8_t temp;
           
-      write_reg(REG_MODE_CONFIG, 0x01);
+      write_reg(REG_MODE_CONFIG, 0b00000001); //Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
       delay(10);
       
       setNumbPPG(ppg);
@@ -355,6 +355,8 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     //
     read_reg(REG_INT_STAT_1);
     read_reg(REG_INT_STAT_2);
+
+    write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
 
     //
     // PPG1 & 2 & 3
@@ -399,43 +401,61 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     ////
       setIntensityLed( intens_led);
 
+     write_reg(REG_MODE_CONFIG, 0b00000110); //Low Power Mode enabled (Register 0x0D[2]), Shutdown (Register 0x0D[1]), Reset (Register 0x0D[0])
+
       // Configure FIFO.
-       write_reg(REG_FIFO_CONFIG_1, 128 - 6);
+       //write_reg(REG_FIFO_CONFIG_1, 0b00010000); (A_FULL = 16)
+         write_reg(REG_FIFO_CONFIG_1, 0b01111010); //(A_FULL = 122)
     //write_reg(REG_FIFO_CONFIG_2, 0b00001101);
       write_reg(REG_FIFO_CONFIG_2, 0b00000010);
-  
+
+     // Configure interrupt.
+    //
+    write_reg(REG_INT_EN_1, 0x84);
+
+    //
           setLedMode(ledMd);
 
-//
-    // Configure interrupt.
-    //
-    write_reg(REG_INT_EN_1, 0x80);
-
-    //
+   
     // exit shutdown mode.
-    //
-    read_reg(REG_MODE_CONFIG);
-    temp &= ~0x02;
-    write_reg(REG_MODE_CONFIG, temp);
+    write_reg(REG_MODE_CONFIG, 0b00000100); //Low Power Mode enabled (Register 0x0D[2]), Shutdown (Register 0x0D[1]), Reset (Register 0x0D[0])
 
-    //
-    // Return REG_SYS_CNTRL which should be 0x00.
-    //
-    temp = read_reg(REG_MODE_CONFIG);
+ 
     //Thank you Michael Lyons!
  }
  
+/*read FIFO*/
+void MAX86141::read_fifo(uint8_t data_buffer[], int count)
+{
+    data_buffer[0] = REG_FIFO_DATA;
+    data_buffer[1] = READ_EN;
+    digitalWrite(SS, HIGH);
+    spi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE3));
+    digitalWrite(SS, LOW);
+    spi->transfer(data_buffer, 2);
+    spi->transfer(data_buffer, count * 3);
+    digitalWrite(SS, HIGH);
+    spi->endTransaction();
+    digitalWrite(SS, LOW);
+
+    if(debug == true){
+        Serial.println("Data buffer");
+        Serial.println(data_buffer[0]);
+    }
+}
+
+void MAX86141::clearInt() {
+    uint16_t intr = 0x00;
+    intr = read_reg(REG_INT_STAT_1) << 8;
+    intr |= read_reg(REG_INT_STAT_2);
+}
 
 
 /* inspired by pseudo-code available on MAX86141 datasheet */
-void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
+void MAX86141::device_data_read(uint8_t *dataBuf, int items_fifo)
 {
-    uint8_t sample_count;
+    int sample_count;
     uint8_t reg_val;
-    // uint8_t dataBuf[6144]; ///128 FIFO samples, 2 channels, 2 PDs, 3 bytes/channel, 4 Leds sequence control (128*3*2*4)*2 = 6144 byte buffer
-    //uint8_t dataBuf[1152]; ///128 FIFO samples, 3 channels, 1 PDs, 3 bytes/channel 128*3*1*3 = 1152 byte buffer
-    // uint8_t dataBuf[768]; ///128 FIFO samples, 2 channels, 1 PDs, 3 bytes/channel 128*3*2*3 = 2304 byte buffer
-    //sample_count = read_reg(REG_FIFO_DATA_COUNT); //number of items available in FIFO to read
     sample_count =  items_fifo;
     
     if(debug == true){
@@ -447,7 +467,7 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
 
     //refer to MAX86140-MAX86141 datasheet - page 15
     if(nb_ppg==1){
-        /*suitable formatting of data for 1 LED control*/
+        //suitable formatting of data for 1 LED control
    if(ledModeSize==1){
      int i = 0;
 
@@ -458,27 +478,27 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
     }
    }
 
-    /*suitable formatting of data for 2 LEDs control*/
+    //suitable formatting of data for 2 LEDs control
    if(ledModeSize==2){
      int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/2; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
 
         tagSeq1B_PPG1[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
         ledSeq1B_PPG1[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
-        
     }
+    
    }
    
-    /*suitable formatting of data for 3 LEDs control*/
+    //suitable formatting of data for 3 LEDs control
        if(ledModeSize==3){
 
     int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/3; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*9+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*9+0] << 16) | (dataBuf[i*9+1] << 8) | (dataBuf[i*9+2])) & 0x7ffff;
@@ -491,12 +511,12 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
     }
        }
 
-        /*suitable formatting of data for 4 LEDs control*/
+        //suitable formatting of data for 4 LEDs control
        if(ledModeSize==4){
 
     int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/4; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
@@ -512,12 +532,12 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
     }
        }
 
-        /*suitable formatting of data for 5 LEDs control*/
+        //suitable formatting of data for 5 LEDs control
        if(ledModeSize==5){
 
     int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/5; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*15+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*15+0] << 16) | (dataBuf[i*15+1] << 8) | (dataBuf[i*15+2])) & 0x7ffff;
@@ -537,12 +557,12 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
     }
        }
 
-       /*suitable formatting of data for 6 LEDs control*/
+       //suitable formatting of data for 6 LEDs control
        if(ledModeSize==6){
 
     int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/6; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
@@ -568,7 +588,7 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
         if(ledModeSize==1){
      int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/2; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
@@ -579,11 +599,11 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
     }
    }
 
-    /*suitable formatting of data for 2 LEDs control*/
+    //suitable formatting of data for 2 LEDs control
    if(ledModeSize==2){
      int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/4; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
@@ -600,12 +620,12 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
     }
    }
    
-    /*suitable formatting of data for 3 LEDs control*/
+    //suitable formatting of data for 3 LEDs control
        if(ledModeSize==3){
 
     int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/6; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
@@ -630,7 +650,7 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
 
     int i = 0;
 
-    for (i = 0; i < sample_count; i++)
+    for (i = 0; i < sample_count/8; i++)
     {
         tagSeq1A_PPG1[i] = (dataBuf[i*24+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*24+0] << 16) | (dataBuf[i*24+1] << 8) | (dataBuf[i*24+2])) & 0x7ffff;
@@ -673,26 +693,7 @@ void MAX86141::device_data_read(uint8_t *dataBuf, uint8_t items_fifo)
  }*/
 
 
-/*read FIFO*/
-void MAX86141::read_fifo(uint8_t data_buffer[], uint8_t count)
-{
-    data_buffer[0] = REG_FIFO_DATA;
-    data_buffer[1] = READ_EN;
-    digitalWrite(SS, HIGH);
-    spi->beginTransaction(SPISettings(spiClk, MSBFIRST, SPI_MODE3));
-    digitalWrite(SS, LOW);
-    spi->transfer(data_buffer, 2);
-    spi->transfer(data_buffer, count * 3);
-    digitalWrite(SS, HIGH);
-    spi->endTransaction();
-    digitalWrite(SS, LOW);
 
-    if(debug == true){
-        Serial.println("Data buffer");
-        Serial.println(data_buffer[0]);
-    }
-
-}
 
 void MAX86141::setSS(int pin){
     SS = pin;
@@ -710,11 +711,7 @@ void MAX86141::setDebug(bool setdebug) {
     debug = setdebug;
 }
 
-void MAX86141::clearInt() {
-    uint16_t intr = 0x00;
-    intr = read_reg(REG_INT_STAT_1) << 8;
-    intr |= read_reg(REG_INT_STAT_2);
-}
+
 
 void MAX86141::irqHandler(void)
 {
