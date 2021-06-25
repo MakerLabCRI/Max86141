@@ -254,8 +254,9 @@ WRITE LEDC5[3:0] to 0x0;
 WRITE LEDC6[3:0] to 0x0;
 WRITE SHDN[0] to 0x0; // Start Sampling STOP;
 */
-#define SIZE 25
-
+#define SIZE 20
+//#define FIFO_SAMPLES (128-0x10) // FIFO_A_FULL[6:0] = 0x10
+#define FIFO_SAMPLES (128-0x7A) // FIFO_A_FULL[6:0] = 0x7A
 
 class MAX86141 {
 
@@ -275,7 +276,7 @@ class MAX86141 {
     Elements signalData_ledSeq3A_PPG1, signalData_ledSeq3B_PPG1;
     Elements signalData_ledSeq1A_PPG2, signalData_ledSeq1B_PPG2, signalData_ledSeq2A_PPG2, signalData_ledSeq2B_PPG2;
     Elements signalData_ledSeq3A_PPG2, signalData_ledSeq3B_PPG2;
-
+   
     // SNR Function
     float signaltonoise(Elements signalBuff, int len);
     
@@ -284,8 +285,8 @@ class MAX86141 {
     void write_reg(uint8_t address, uint8_t data_in);
     uint8_t read_reg(uint8_t address);
     void fifo_intr();
-    void read_fifo(uint8_t data_buffer[], uint8_t count);
-    void device_data_read(uint8_t *dataBuf,uint8_t items_fifo);
+    void read_fifo(uint8_t data_buffer[], int count);
+    void device_data_read(uint8_t *dataBuf, int items_fifo);
     void setSS(int pin);
     void setSPI(SPIClass * newspi);
     void setSpiClk(int newSpiClk);
@@ -302,8 +303,6 @@ class MAX86141 {
     void setLedModeSize(int size_led);
     
     void irqHandler(void);
-    void fillBuffForSNR(int i);
-    void fillBuffForSNR1(int i);
     
     int getledModeSize();
     int getNbPPG();
