@@ -63,7 +63,7 @@ void setup() {
   pulseOx1.setDebug(true);
   #ifdef PDsLED
     int LedMode[]= {1/*LED1 (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
-    pulseOx1.initialisation(2/*nb_ppg*/,LedMode/*LedMode*/,2/*Number of sequences*/,1/*Number of LEDs*/,6/*intensity_LEDs*/,4/*sample_average*/, 0x0E/*sample_rate*/,0x3/*pulse width*/,0x2/*ADC Range= 16uA*/,spiClk);
+ pulseOx1.initialisation(2/*nb_pds*/,LedMode/*LedMode*/,2/*Number of sequences*/,1/*Number of LEDs*/,10/*intensity_LEDs*/,8/*sample_average*/, 0x0E/*sample_rate*/,0x3/*pulse width*/,0x2/*ADC Range= 16uA*/,spiClk);
   #endif
 
   #ifdef PDLEDs
