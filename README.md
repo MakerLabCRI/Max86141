@@ -18,3 +18,8 @@ You can also find [here](https://github.com/prashnts) the github of our collabor
 <br/> Version : 1.2.1
 <br/> URL : https://github.com/janelia-arduino/Vector
 <br/> Author : Peter Polidoro
+
+### Streaming : Library Information
+> Name : Streaming
+<br/> Version : 6.0.9
+<br/> Author : Mikal Hart
