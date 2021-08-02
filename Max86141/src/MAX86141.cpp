@@ -10,12 +10,12 @@ void MAX86141::write_reg(uint8_t address, uint8_t data_in) {
     m_tx_buf[2] = data_in;  //Byte to Write
 
     if(debug == true) {
-        Serial.print("W_TX ");
+       /* Serial.print("W_TX ");
         Serial.print(m_tx_buf[0], HEX);
         Serial.print("|");
         Serial.print(m_tx_buf[1], HEX);
         Serial.print("|");
-        Serial.println(m_tx_buf[2], HEX);
+        Serial.println(m_tx_buf[2], HEX);*/
     }
 
     /**< A buffer for incoming data. */
@@ -36,12 +36,12 @@ void MAX86141::write_reg(uint8_t address, uint8_t data_in) {
     spi->endTransaction();
 
     if(debug == true) {
-        Serial.print("W_RX ");
+        /*Serial.print("W_RX ");
         Serial.print(m_rx_buf[0], HEX);
         Serial.print("|");
         Serial.print(m_rx_buf[1], HEX);
         Serial.print("|");
-        Serial.println(m_rx_buf[2], HEX);
+        Serial.println(m_rx_buf[2], HEX);*/
     }
 }
 
@@ -82,12 +82,12 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     m_rx_buf[2] = m_tx_buf[2];
 
     if(debug == true){
-        Serial.print("R_RX ");
+       /* Serial.print("R_RX ");
         Serial.print(m_rx_buf[0], HEX);
         Serial.print("|");
         Serial.print(m_rx_buf[1], HEX);
         Serial.print("|");
-        Serial.println(m_rx_buf[2], HEX);
+        Serial.println(m_rx_buf[2], HEX);*/
     }
 
     return m_rx_buf[2];
@@ -122,78 +122,79 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     int MAX86141::getADCRange(){
       return adcRange;
     }
-     int* MAX86141::get_ledSeq1A_PPG1(){
+    
+    int MAX86141::get_ledSeq1A_PPG1(){
       return ledSeq1A_PPG1;
      }
-     int* MAX86141::get_tagSeq1A_PPG1(){
+     int MAX86141::get_tagSeq1A_PPG1(){
       return tagSeq1A_PPG1;
      }
 
-    int* MAX86141::get_ledSeq1B_PPG1(){
+    int MAX86141::get_ledSeq1B_PPG1(){
      return ledSeq1B_PPG1;
     }
-    int* MAX86141::get_tagSeq1B_PPG1(){
+    int MAX86141::get_tagSeq1B_PPG1(){
       return tagSeq1B_PPG1;
     }
-    int* MAX86141::get_ledSeq2A_PPG1(){
+    int MAX86141::get_ledSeq2A_PPG1(){
       return ledSeq2A_PPG1;
       }
-    int* MAX86141::get_tagSeq2A_PPG1(){
+    int MAX86141::get_tagSeq2A_PPG1(){
       return tagSeq2A_PPG1;
     }
-    int* MAX86141::get_ledSeq2B_PPG1(){
+    int MAX86141::get_ledSeq2B_PPG1(){
       return ledSeq2B_PPG1;
       } 
-    int* MAX86141::get_tagSeq2B_PPG1(){
+    int MAX86141::get_tagSeq2B_PPG1(){
       return tagSeq2B_PPG1;
     }
-    int* MAX86141::get_ledSeq3A_PPG1(){
+    int MAX86141::get_ledSeq3A_PPG1(){
       return ledSeq3A_PPG1;
       }
-    int* MAX86141::get_tagSeq3A_PPG1(){
+    int MAX86141::get_tagSeq3A_PPG1(){
       return tagSeq3A_PPG1;
       }
-    int* MAX86141::get_ledSeq3B_PPG1(){
+    int MAX86141::get_ledSeq3B_PPG1(){
       return ledSeq3B_PPG1;
       }
-    int* MAX86141::get_tagSeq3B_PPG1(){
+    int MAX86141::get_tagSeq3B_PPG1(){
       return tagSeq3B_PPG1;
     }
 
-    int* MAX86141::get_ledSeq1A_PPG2(){
+    int MAX86141::get_ledSeq1A_PPG2(){
       return ledSeq1A_PPG2;
       } 
-    int* MAX86141::get_tagSeq1A_PPG2(){
+    int MAX86141::get_tagSeq1A_PPG2(){
       return tagSeq1A_PPG2;
     }
-    int* MAX86141::get_ledSeq1B_PPG2(){
+    int MAX86141::get_ledSeq1B_PPG2(){
       return ledSeq1B_PPG2;
     }
-    int* MAX86141::get_tagSeq1B_PPG2(){
+    int MAX86141::get_tagSeq1B_PPG2(){
       return tagSeq1B_PPG2;
       }
-    int* MAX86141::get_ledSeq2A_PPG2(){
+    int MAX86141::get_ledSeq2A_PPG2(){
       return ledSeq2A_PPG2;
     }
-    int* MAX86141::get_tagSeq2A_PPG2(){
+    int MAX86141::get_tagSeq2A_PPG2(){
       return tagSeq2A_PPG2;
     }
-    int* MAX86141::get_ledSeq2B_PPG2(){
+    int MAX86141::get_ledSeq2B_PPG2(){
       return ledSeq2B_PPG2;
       } 
-    int* MAX86141::get_tagSeq2B_PPG2(){
+    int MAX86141::get_tagSeq2B_PPG2(){
       return tagSeq2B_PPG2;
       }
-    int* MAX86141::get_ledSeq3A_PPG2(){
+    int MAX86141::get_ledSeq3A_PPG2(){
       return ledSeq3A_PPG2;
       } 
-    int* MAX86141::get_tagSeq3A_PPG2(){
+    int MAX86141::get_tagSeq3A_PPG2(){
       return tagSeq3A_PPG2;
       }
-    int* MAX86141::get_ledSeq3B_PPG2(){
+    int MAX86141::get_ledSeq3B_PPG2(){
       return ledSeq3B_PPG2;
       }
-    int* MAX86141::get_tagSeq3B_PPG2(){
+    int MAX86141::get_tagSeq3B_PPG2(){
       return tagSeq3B_PPG2;
       }
 ////////////////////////////////////////
@@ -231,18 +232,17 @@ uint8_t MAX86141::read_reg(uint8_t address) {
         Serial.println("3 LED CONTROL ");
         write_reg(REG_LED_SEQ_1, SEQ1);
         write_reg(REG_LED_SEQ_2, ledMode[2]);
-
       }
       else if(ledModeSize==4){
           Serial.print("4 LED CONTROL ");
 
         ledMode[1]= ledMode[1]<<4; 
         int SEQ1= ledMode[1]+ ledMode[0];
-                  Serial.println(SEQ1,BIN);
+                  //Serial.println(SEQ1,BIN);
         write_reg(REG_LED_SEQ_1, SEQ1);
         ledMode[3]= ledMode[3]<<4;
         int SEQ2= ledMode[3]+ ledMode[2];
-                  Serial.println(SEQ2,BIN);
+                  //Serial.println(SEQ2,BIN);
         write_reg(REG_LED_SEQ_2, SEQ2);
       }
       else if(ledModeSize==5){
@@ -267,14 +267,12 @@ uint8_t MAX86141::read_reg(uint8_t address) {
         int SEQ3= ledMode[5]+ ledMode[4];
         write_reg(REG_LED_SEQ_3, SEQ3);
       }
-      
     }
     void MAX86141::setNumLeds(int nb_leds){
       number_leds = nb_leds;
     }
     void MAX86141::setIntensityLed(int intens_led){
       intensity_led= intens_led;
-      
       if( number_leds== 1){
       write_reg(REG_LED_RANGE_1, 0b00000011); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
       write_reg(REG_LED1_PA, intensity_led);
@@ -291,8 +289,6 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       write_reg(REG_LED3_PA, intensity_led);
       }
       
-  
-    
     else if(number_leds==4){
     write_reg(REG_LED_RANGE_1, 0b00111111); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
     write_reg(REG_LED_RANGE_2, 0b00000011); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
@@ -368,8 +364,8 @@ uint8_t MAX86141::read_reg(uint8_t address) {
        
        adcRange= adcRange<<2;
        int8_t adcRange_pulseWidth=  adcRange + pulse_width;
-       Serial.print("ADC Range - PulseWidth");
-          Serial.println(adcRange_pulseWidth,BIN);
+       //Serial.print("ADC Range - PulseWidth");
+         // Serial.println(adcRange_pulseWidth,BIN);
        write_reg(REG_PPG_CONFIG_1, adcRange_pulseWidth); //ALC_DIS,ADD_OFF,PPG2_RGE,PPG1_RGE,PPG_TINT
     }
     else{
@@ -379,33 +375,36 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       adcRange = a+b;
       //Serial.println(adcRange,BIN);
        int8_t adcRange_pulseWidth= adcRange + pulse_width;
-       Serial.print("ADC Range - PulseWidth");
-          Serial.println(adcRange_pulseWidth,BIN);
+       //Serial.print("ADC Range - PulseWidth");
+         // Serial.println(adcRange_pulseWidth,BIN);
        write_reg(REG_PPG_CONFIG_1, adcRange_pulseWidth); //ALC_DIS,ADD_OFF,PPG2_RGE,PPG1_RGE,PPG_TINT
     }
 
     setSample(smpl_avr, smpl_rate);
-        Serial.println(sample_rate,BIN);
+        //Serial.println(sample_rate,BIN);
 
     int sample1= sample_rate<<3;
-    Serial.println(sample1,BIN);
+    //Serial.println(sample1,BIN);
     int sample2= sample_average>>2;
-    Serial.println(sample2,BIN);
+    //Serial.println(sample2,BIN);
     int sample= sample1 + sample2;
-    Serial.print("Samlple");
-          Serial.println(sample,BIN);
+    //Serial.print("Samlple");
+      //    Serial.println(sample,BIN);
     write_reg(REG_PPG_CONFIG_2, sample); //SPS (0-5), SMP_AVE (6-8)
     write_reg(REG_PPG_CONFIG_3, 0b11000110); //LED_SETLNG, DIG_FILT_SEL, BURST_EN
         ////
     write_reg(REG_PD_BIAS, 0b00010001);
     ////
-      setIntensityLed( intens_led);
+      setIntensityLed(intens_led);
 
      write_reg(REG_MODE_CONFIG, 0b00000110); //Low Power Mode enabled (Register 0x0D[2]), Shutdown (Register 0x0D[1]), Reset (Register 0x0D[0])
 
       // Configure FIFO.
-       //write_reg(REG_FIFO_CONFIG_1, 0b00010000); (A_FULL = 16)
-         write_reg(REG_FIFO_CONFIG_1, 0b01111010); //(A_FULL = 122)
+        
+        //write_reg(REG_FIFO_CONFIG_1, 0b00000000); //(A_FULL = 0)
+       //write_reg(REG_FIFO_CONFIG_1, 0b00010000); //(A_FULL = 16)
+         write_reg(REG_FIFO_CONFIG_1, 0b01111000); //(A_FULL = 120)
+     //write_reg(REG_FIFO_CONFIG_1, 0b01100100); //(A_FULL = 100)
     //write_reg(REG_FIFO_CONFIG_2, 0b00001101);
       write_reg(REG_FIFO_CONFIG_2, 0b00000010);
 
@@ -420,7 +419,6 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     // exit shutdown mode.
     write_reg(REG_MODE_CONFIG, 0b00000100); //Low Power Mode enabled (Register 0x0D[2]), Shutdown (Register 0x0D[1]), Reset (Register 0x0D[0])
 
- 
     //Thank you Michael Lyons!
  }
  
@@ -439,8 +437,8 @@ void MAX86141::read_fifo(uint8_t data_buffer[], int count)
     digitalWrite(SS, LOW);
 
     if(debug == true){
-        Serial.println("Data buffer");
-        Serial.println(data_buffer[0]);
+        //Serial.println("Data buffer");
+        //Serial.println(data_buffer[0]);
     }
 }
 
@@ -450,238 +448,364 @@ void MAX86141::clearInt() {
     intr |= read_reg(REG_INT_STAT_2);
 }
 
-
 /* inspired by pseudo-code available on MAX86141 datasheet */
-void MAX86141::device_data_read(uint8_t *dataBuf, int items_fifo)
+void MAX86141::device_data_read1()
 {
     int sample_count;
     uint8_t reg_val;
-    // uint8_t dataBuf[6144]; ///128 FIFO samples, 2 channels, 2 PDs, 3 bytes/channel, 4 Leds sequence control (128*3*2*4)*2 = 6144 byte buffer
-    //uint8_t dataBuf[1152]; ///128 FIFO samples, 3 channels, 1 PDs, 3 bytes/channel 128*3*1*3 = 1152 byte buffer
-    // uint8_t dataBuf[768]; ///128 FIFO samples, 2 channels, 1 PDs, 3 bytes/channel 128*3*2*3 = 2304 byte buffer
-    //sample_count = read_reg(REG_FIFO_DATA_COUNT); //number of items available in FIFO to read
-    sample_count =  items_fifo;
-    
+   
+    sample_count =  read_reg(REG_FIFO_DATA_COUNT);
+ //Serial.println("fifo-size :"+String(sample_count));
+
+ uint8_t dataBuf[FIFO_SAMPLES*3];
     if(debug == true){
-        Serial.print("Sample Count: ");
-        Serial.println(sample_count);
+        //Serial.print("Sample Count: ");
+        //Serial.println(sample_count);
     }
-
-    read_fifo(dataBuf, sample_count);
-
+    //read_fifo(dataBuf, sample_count);
+  read_fifo(dataBuf, FIFO_SAMPLES);
     //refer to MAX86140-MAX86141 datasheet - page 15
-    if(nb_ppg==1){
+    if(nb_ppg==1)
+    {
         //suitable formatting of data for 1 LED control
    if(ledModeSize==1){
      int i = 0;
-
+int tagSeq1A_PPG11[FIFO_SAMPLES],ledSeq1A_PPG11[FIFO_SAMPLES];
     for (i = 0; i < sample_count; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*3+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*3+0] << 16) | (dataBuf[i*3+1] << 8) | (dataBuf[i*3+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*3+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*3+0] << 16) | (dataBuf[i*3+1] << 8) | (dataBuf[i*3+2])) & 0x7ffff;
     }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
    }
 
     //suitable formatting of data for 2 LEDs control
    if(ledModeSize==2){
      int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/2],ledSeq1A_PPG11[FIFO_SAMPLES/2],tagSeq1B_PPG11[FIFO_SAMPLES/2],ledSeq1B_PPG11[FIFO_SAMPLES/2];
 
     for (i = 0; i < sample_count/2; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
     }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
     
    }
    
     //suitable formatting of data for 3 LEDs control
-       if(ledModeSize==3){
+     /*  if(ledModeSize==3){
 
     int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/3],ledSeq1A_PPG11[FIFO_SAMPLES/3],tagSeq1B_PPG11[FIFO_SAMPLES/3],ledSeq1B_PPG11[FIFO_SAMPLES/3];
+int tagSeq2A_PPG11[FIFO_SAMPLES/3],ledSeq2A_PPG11[FIFO_SAMPLES/3];
 
     for (i = 0; i < sample_count/3; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*9+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*9+0] << 16) | (dataBuf[i*9+1] << 8) | (dataBuf[i*9+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*9+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*9+0] << 16) | (dataBuf[i*9+1] << 8) | (dataBuf[i*9+2])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*9+3] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*9+3] << 16) | (dataBuf[i*9+4] << 8) | (dataBuf[i*9+5])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*9+3] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*9+3] << 16) | (dataBuf[i*9+4] << 8) | (dataBuf[i*9+5])) & 0x7ffff;
 
-        tagSeq2A_PPG1[i] = (dataBuf[i*9+6] >> 3) & 0x1f;
-        ledSeq2A_PPG1[i] = ((dataBuf[i*9+6] << 16) | (dataBuf[i*9+7] << 8) | (dataBuf[i*9+8])) & 0x7ffff;
+        tagSeq2A_PPG11[i] = (dataBuf[i*9+6] >> 3) & 0x1f;
+        ledSeq2A_PPG11[i] = ((dataBuf[i*9+6] << 16) | (dataBuf[i*9+7] << 8) | (dataBuf[i*9+8])) & 0x7ffff;
     }
-       }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+
+ tagSeq2A_PPG1 = tagSeq2A_PPG11[0];
+ ledSeq2A_PPG1 = ledSeq2A_PPG11[0];
+       }*/
 
         //suitable formatting of data for 4 LEDs control
-       if(ledModeSize==4){
+     /*  if(ledModeSize==4){
 
     int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/4],ledSeq1A_PPG11[FIFO_SAMPLES/4],tagSeq1B_PPG11[FIFO_SAMPLES/4],ledSeq1B_PPG11[FIFO_SAMPLES/4];
+int tagSeq2A_PPG11[FIFO_SAMPLES/4],ledSeq2A_PPG11[FIFO_SAMPLES/4],tagSeq2B_PPG11[FIFO_SAMPLES/4],ledSeq2B_PPG11[FIFO_SAMPLES/4]; 
 
     for (i = 0; i < sample_count/4; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
 
-        tagSeq2A_PPG1 [i] = (dataBuf[i*12+6] >> 3) & 0x1f;
-        ledSeq2A_PPG1[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
+        tagSeq2A_PPG11[i] = (dataBuf[i*12+6] >> 3) & 0x1f;
+        ledSeq2A_PPG11[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
 
-        tagSeq2B_PPG1[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
-        ledSeq2B_PPG1[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
+        tagSeq2B_PPG11[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
+        ledSeq2B_PPG11[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
     }
-       }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+
+ tagSeq2A_PPG1 = tagSeq2A_PPG11[0];
+ ledSeq2A_PPG1 = ledSeq2A_PPG11[0];
+ tagSeq2B_PPG1 = tagSeq2B_PPG11[0];
+ ledSeq2B_PPG1 = ledSeq2B_PPG11[0];
+       }*/
 
         //suitable formatting of data for 5 LEDs control
-       if(ledModeSize==5){
+       /*if(ledModeSize==5){
 
     int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/5],ledSeq1A_PPG11[FIFO_SAMPLES/5],tagSeq1B_PPG11[FIFO_SAMPLES/5],ledSeq1B_PPG11[FIFO_SAMPLES/5];
+int tagSeq2A_PPG11[FIFO_SAMPLES/5],ledSeq2A_PPG11[FIFO_SAMPLES/5],tagSeq2B_PPG11[FIFO_SAMPLES/5],ledSeq2B_PPG11[FIFO_SAMPLES/5]; 
+int tagSeq3A_PPG11[FIFO_SAMPLES/5],ledSeq3A_PPG11[FIFO_SAMPLES/5];
 
     for (i = 0; i < sample_count/5; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*15+0] >> 3) & 0x1f;
+        tagSeq1A_PPG11[i] = (dataBuf[i*15+0] >> 3) & 0x1f;
         ledSeq1A_PPG1[i] = ((dataBuf[i*15+0] << 16) | (dataBuf[i*15+1] << 8) | (dataBuf[i*15+2])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*15+3] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*15+3] << 16) | (dataBuf[i*15+4] << 8) | (dataBuf[i*15+5])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*15+3] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*15+3] << 16) | (dataBuf[i*15+4] << 8) | (dataBuf[i*15+5])) & 0x7ffff;
 
-        tagSeq2A_PPG1[i] = (dataBuf[i*15+6] >> 3) & 0x1f;
-        ledSeq2A_PPG1[i] = ((dataBuf[i*15+6] << 16) | (dataBuf[i*15+7] << 8) | (dataBuf[i*15+8])) & 0x7ffff;
+        tagSeq2A_PPG11[i] = (dataBuf[i*15+6] >> 3) & 0x1f;
+        ledSeq2A_PPG11[i] = ((dataBuf[i*15+6] << 16) | (dataBuf[i*15+7] << 8) | (dataBuf[i*15+8])) & 0x7ffff;
 
-        tagSeq2B_PPG1[i] = (dataBuf[i*15+9] >> 3) & 0x1f;
-        ledSeq2B_PPG1[i] = ((dataBuf[i*15+9] << 16) | (dataBuf[i*15+10] << 8) | (dataBuf[i*15+11])) & 0x7ffff;
+        tagSeq2B_PPG11[i] = (dataBuf[i*15+9] >> 3) & 0x1f;
+        ledSeq2B_PPG11[i] = ((dataBuf[i*15+9] << 16) | (dataBuf[i*15+10] << 8) | (dataBuf[i*15+11])) & 0x7ffff;
 
-        tagSeq3A_PPG1[i] = (dataBuf[i*15+12] >> 3) & 0x1f;
-        ledSeq3A_PPG1[i] = ((dataBuf[i*15+12] << 16) | (dataBuf[i*15+13] << 8) | (dataBuf[i*15+14])) & 0x7ffff;
+        tagSeq3A_PPG11[i] = (dataBuf[i*15+12] >> 3) & 0x1f;
+        ledSeq3A_PPG11[i] = ((dataBuf[i*15+12] << 16) | (dataBuf[i*15+13] << 8) | (dataBuf[i*15+14])) & 0x7ffff;
         
     }
-       }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+
+ tagSeq2A_PPG1 = tagSeq2A_PPG11[0];
+ ledSeq2A_PPG1 = ledSeq2A_PPG11[0];
+ tagSeq2B_PPG1 = tagSeq2B_PPG11[0];
+ ledSeq2B_PPG1 = ledSeq2B_PPG11[0];
+
+ tagSeq3A_PPG1 = tagSeq3A_PPG11[0];
+ ledSeq3A_PPG1 = ledSeq3A_PPG11[0];
+       }*/
 
        //suitable formatting of data for 6 LEDs control
-       if(ledModeSize==6){
+      /* if(ledModeSize==6){
 
     int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/6],ledSeq1A_PPG11[FIFO_SAMPLES/6],tagSeq1B_PPG11[FIFO_SAMPLES/6],ledSeq1B_PPG11[FIFO_SAMPLES/6];
+int tagSeq2A_PPG11[FIFO_SAMPLES/6],ledSeq2A_PPG11[FIFO_SAMPLES/6],tagSeq2B_PPG11[FIFO_SAMPLES/6],ledSeq2B_PPG11[FIFO_SAMPLES/6]; 
+int tagSeq3A_PPG11[FIFO_SAMPLES/6],ledSeq3A_PPG11[FIFO_SAMPLES/6],tagSeq3B_PPG11[FIFO_SAMPLES/6],ledSeq3B_PPG11[FIFO_SAMPLES/6];
 
     for (i = 0; i < sample_count/6; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
 
-        tagSeq2A_PPG1[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
-        ledSeq2A_PPG1[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
+        tagSeq2A_PPG11[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
+        ledSeq2A_PPG11[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
 
-        tagSeq2B_PPG1[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
-        ledSeq2B_PPG1[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
+        tagSeq2B_PPG11[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
+        ledSeq2B_PPG11[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
 
-        tagSeq3A_PPG1[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
-        ledSeq3A_PPG1[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
+        tagSeq3A_PPG11[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
+        ledSeq3A_PPG11[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
 
-        tagSeq3B_PPG1[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
-        ledSeq3B_PPG1[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
+        tagSeq3B_PPG11[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
+        ledSeq3B_PPG11[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
         
     }
-       }}
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+
+ tagSeq2A_PPG1 = tagSeq2A_PPG11[0];
+ ledSeq2A_PPG1 = ledSeq2A_PPG11[0];
+ tagSeq2B_PPG1 = tagSeq2B_PPG11[0];
+ ledSeq2B_PPG1 = ledSeq2B_PPG11[0];
+
+ tagSeq3A_PPG1 = tagSeq3A_PPG11[0];
+ ledSeq3A_PPG1 = ledSeq3A_PPG11[0];
+ tagSeq3B_PPG1 = tagSeq3B_PPG11[0];
+ ledSeq3B_PPG1 = ledSeq3B_PPG11[0];
+       }*/
+     }
        else {
-        if(ledModeSize==1){
+       if(ledModeSize==1){
      int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/2],ledSeq1A_PPG11[FIFO_SAMPLES/2];
+int tagSeq1A_PPG22[FIFO_SAMPLES/2],ledSeq1A_PPG22[FIFO_SAMPLES/2];
 
     for (i = 0; i < sample_count/2; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
 
-        tagSeq1A_PPG2[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
-        ledSeq1A_PPG2[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
+        tagSeq1A_PPG22[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
+        ledSeq1A_PPG22[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
         
     }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1A_PPG2 = tagSeq1A_PPG22[0];
+ ledSeq1A_PPG2 = ledSeq1A_PPG22[0];
    }
 
     //suitable formatting of data for 2 LEDs control
-   if(ledModeSize==2){
+   
+    if(ledModeSize==2){
      int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/4],ledSeq1A_PPG11[FIFO_SAMPLES/4],tagSeq1B_PPG11[FIFO_SAMPLES/4],ledSeq1B_PPG11[FIFO_SAMPLES/4];
+int tagSeq1A_PPG22[FIFO_SAMPLES/4],ledSeq1A_PPG22[FIFO_SAMPLES/4],tagSeq1B_PPG22[FIFO_SAMPLES/4],ledSeq1B_PPG22[FIFO_SAMPLES/4]; 
 
     for (i = 0; i < sample_count/4; i++)
-    {
-        tagSeq1A_PPG1[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
+    {   
+        tagSeq1A_PPG11[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
 
-        tagSeq1A_PPG2[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
-        ledSeq1A_PPG2[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
+        tagSeq1A_PPG22[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
+        ledSeq1A_PPG22[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*12+6] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*12+6] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*12+6] << 16) | (dataBuf[i*12+7] << 8) | (dataBuf[i*12+8])) & 0x7ffff;
 
-        tagSeq1B_PPG2[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
-        ledSeq1B_PPG2[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8) | (dataBuf[i*12+11])) & 0x7ffff;
-        
+        tagSeq1B_PPG22[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
+        ledSeq1B_PPG22[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8)| (dataBuf[i*12+11])) & 0x7ffff;
     }
-   }
+ 
+  tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+  ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+
+  tagSeq1A_PPG2 = tagSeq1A_PPG22[0];
+  ledSeq1A_PPG2 = ledSeq1A_PPG22[0]; 
+
+  tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+  ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+
+  tagSeq1B_PPG2 = tagSeq1B_PPG22[0];
+  ledSeq1B_PPG2 = ledSeq1B_PPG22[0];
+
+/*Serial.print(ledSeq1A_PPG1);
+Serial.print(",");
+Serial.print(ledSeq1A_PPG2);
+Serial.println();*/
+  //Serial.println(ledSeq1A_PPG1[0]);
+      }
    
     //suitable formatting of data for 3 LEDs control
-       if(ledModeSize==3){
+     /*  if(ledModeSize==3){
 
     int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/6],ledSeq1A_PPG11[FIFO_SAMPLES/6],tagSeq1B_PPG11[FIFO_SAMPLES/6],ledSeq1B_PPG11[FIFO_SAMPLES/6];
+int tagSeq1A_PPG22[FIFO_SAMPLES/6],ledSeq1A_PPG22[FIFO_SAMPLES/6],tagSeq1B_PPG22[FIFO_SAMPLES/6],ledSeq1B_PPG22[FIFO_SAMPLES/6]; 
+int tagSeq2A_PPG11[FIFO_SAMPLES/6],ledSeq2A_PPG11[FIFO_SAMPLES/6],tagSeq2A_PPG22[FIFO_SAMPLES/6],ledSeq2A_PPG22[FIFO_SAMPLES/6];
 
     for (i = 0; i < sample_count/6; i++)
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*18+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*18+0] << 16) | (dataBuf[i*18+1] << 8) | (dataBuf[i*18+2])) & 0x7ffff;
 
-        tagSeq1A_PPG2[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
-        ledSeq1A_PPG2[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
+        tagSeq1A_PPG22[i] = (dataBuf[i*18+3] >> 3) & 0x1f;
+        ledSeq1A_PPG22[i] = ((dataBuf[i*18+3] << 16) | (dataBuf[i*18+4] << 8) | (dataBuf[i*18+5])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*18+6] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*18+6] << 16) | (dataBuf[i*18+7] << 8) | (dataBuf[i*18+8])) & 0x7ffff;
 
-        tagSeq1B_PPG2[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
-        ledSeq1B_PPG2[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
+        tagSeq1B_PPG22[i] = (dataBuf[i*18+9] >> 3) & 0x1f;
+        ledSeq1B_PPG22[i] = ((dataBuf[i*18+9] << 16) | (dataBuf[i*18+10] << 8) | (dataBuf[i*18+11])) & 0x7ffff;
 
-        tagSeq2A_PPG1[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
-        ledSeq2A_PPG1[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
+        tagSeq2A_PPG11[i] = (dataBuf[i*18+12] >> 3) & 0x1f;
+        ledSeq2A_PPG11[i] = ((dataBuf[i*18+12] << 16) | (dataBuf[i*18+13] << 8) | (dataBuf[i*18+14])) & 0x7ffff;
 
-        tagSeq2A_PPG2[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
-        ledSeq2A_PPG2[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
+        tagSeq2A_PPG22[i] = (dataBuf[i*18+15] >> 3) & 0x1f;
+        ledSeq2A_PPG22[i] = ((dataBuf[i*18+15] << 16) | (dataBuf[i*18+16] << 8) | (dataBuf[i*18+17])) & 0x7ffff;
     }
-       }
-           if(ledModeSize==4){
+tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1A_PPG2 = tagSeq1A_PPG22[0];
+ ledSeq1A_PPG2 = ledSeq1A_PPG22[0];
 
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+ tagSeq1B_PPG2 = tagSeq1B_PPG22[0];
+ ledSeq1B_PPG2 = ledSeq1B_PPG22[0];
+
+ tagSeq2A_PPG1 = tagSeq2A_PPG11[0];
+ ledSeq2A_PPG1 = ledSeq2A_PPG11[0];
+ tagSeq2A_PPG2 = tagSeq2A_PPG22[0];
+ ledSeq2A_PPG2 = ledSeq2A_PPG22[0];
+       }*/
+           if (ledModeSize==4){
     int i = 0;
+int tagSeq1A_PPG11[FIFO_SAMPLES/8],ledSeq1A_PPG11[FIFO_SAMPLES/8],tagSeq1B_PPG11[FIFO_SAMPLES/8],ledSeq1B_PPG11[FIFO_SAMPLES/8];
+int tagSeq1A_PPG22[FIFO_SAMPLES/8],ledSeq1A_PPG22[FIFO_SAMPLES/8],tagSeq1B_PPG22[FIFO_SAMPLES/8],ledSeq1B_PPG22[FIFO_SAMPLES/8]; 
+int tagSeq2A_PPG11[FIFO_SAMPLES/8],ledSeq2A_PPG11[FIFO_SAMPLES/8],tagSeq2A_PPG22[FIFO_SAMPLES/8],ledSeq2A_PPG22[FIFO_SAMPLES/8];
+int tagSeq2B_PPG11[FIFO_SAMPLES/8],ledSeq2B_PPG11[FIFO_SAMPLES/8],tagSeq2B_PPG22[FIFO_SAMPLES/8],ledSeq2B_PPG22[FIFO_SAMPLES/8];
 
     for (i = 0; i < sample_count/8; i++)
+
     {
-        tagSeq1A_PPG1[i] = (dataBuf[i*24+0] >> 3) & 0x1f;
-        ledSeq1A_PPG1[i] = ((dataBuf[i*24+0] << 16) | (dataBuf[i*24+1] << 8) | (dataBuf[i*24+2])) & 0x7ffff;
+        tagSeq1A_PPG11[i] = (dataBuf[i*24+0] >> 3) & 0x1f;
+        ledSeq1A_PPG11[i] = ((dataBuf[i*24+0] << 16) | (dataBuf[i*24+1] << 8) | (dataBuf[i*24+2])) & 0x7ffff;
 
-        tagSeq1A_PPG2[i] = (dataBuf[i*24+3] >> 3) & 0x1f;
-        ledSeq1A_PPG2[i] = ((dataBuf[i*24+3] << 16) | (dataBuf[i*24+4] << 8) | (dataBuf[i*24+5])) & 0x7ffff;
+        tagSeq1A_PPG22[i] = (dataBuf[i*24+3] >> 3) & 0x1f;
+        ledSeq1A_PPG22[i] = ((dataBuf[i*24+3] << 16) | (dataBuf[i*24+4] << 8) | (dataBuf[i*24+5])) & 0x7ffff;
 
-        tagSeq1B_PPG1[i] = (dataBuf[i*24+6] >> 3) & 0x1f;
-        ledSeq1B_PPG1[i] = ((dataBuf[i*24+6] << 16) | (dataBuf[i*24+7] << 8) | (dataBuf[i*24+8])) & 0x7ffff;
+        tagSeq1B_PPG11[i] = (dataBuf[i*24+6] >> 3) & 0x1f;
+        ledSeq1B_PPG11[i] = ((dataBuf[i*24+6] << 16) | (dataBuf[i*24+7] << 8) | (dataBuf[i*24+8])) & 0x7ffff;
 
-        tagSeq1B_PPG2[i] = (dataBuf[i*24+9] >> 3) & 0x1f;
-        ledSeq1B_PPG2[i] = ((dataBuf[i*24+9] << 16) | (dataBuf[i*24+10] << 8) | (dataBuf[i*24+11])) & 0x7ffff;
+        tagSeq1B_PPG22[i] = (dataBuf[i*24+9] >> 3) & 0x1f;
+        ledSeq1B_PPG22[i] = ((dataBuf[i*24+9] << 16) | (dataBuf[i*24+10] << 8) | (dataBuf[i*24+11])) & 0x7ffff;
 
-        tagSeq2A_PPG1[i] = (dataBuf[i*24+12] >> 3) & 0x1f;
-        ledSeq2A_PPG1[i] = ((dataBuf[i*24+12] << 16) | (dataBuf[i*24+13] << 8) | (dataBuf[i*24+14])) & 0x7ffff;
+        tagSeq2A_PPG11[i] = (dataBuf[i*24+12] >> 3) & 0x1f;
+        ledSeq2A_PPG11[i] = ((dataBuf[i*24+12] << 16) | (dataBuf[i*24+13] << 8) | (dataBuf[i*24+14])) & 0x7ffff;
 
-        tagSeq2A_PPG2[i] = (dataBuf[i*24+15] >> 3) & 0x1f;
-        ledSeq2A_PPG2[i] = ((dataBuf[i*24+15] << 16) | (dataBuf[i*24+16] << 8) | (dataBuf[i*24+17])) & 0x7ffff;
+        tagSeq2A_PPG22[i] = (dataBuf[i*24+15] >> 3) & 0x1f;
+        ledSeq2A_PPG22[i] = ((dataBuf[i*24+15] << 16) | (dataBuf[i*24+16] << 8) | (dataBuf[i*24+17])) & 0x7ffff;
 
-        tagSeq2B_PPG1[i] = (dataBuf[i*24+18] >> 3) & 0x1f;
-        ledSeq2B_PPG1[i] = ((dataBuf[i*24+18] << 16) | (dataBuf[i*24+19] << 8) | (dataBuf[i*24+20])) & 0x7ffff;
+        tagSeq2B_PPG11[i] = (dataBuf[i*24+18] >> 3) & 0x1f;
+        ledSeq2B_PPG11[i] = ((dataBuf[i*24+18] << 16) | (dataBuf[i*24+19] << 8) | (dataBuf[i*24+20])) & 0x7ffff;
 
-        tagSeq2B_PPG2[i] = (dataBuf[i*24+21] >> 3) & 0x1f;
-        ledSeq2B_PPG2[i] = ((dataBuf[i*24+21] << 16) | (dataBuf[i*24+22] << 8) | (dataBuf[i*24+23])) & 0x7ffff;
-    }
+        tagSeq2B_PPG22[i] = (dataBuf[i*24+21] >> 3) & 0x1f;
+        ledSeq2B_PPG22[i] = ((dataBuf[i*24+21] << 16) | (dataBuf[i*24+22] << 8) | (dataBuf[i*24+23])) & 0x7ffff;
+
+      }
+ tagSeq1A_PPG1 = tagSeq1A_PPG11[0];
+ ledSeq1A_PPG1 = ledSeq1A_PPG11[0];
+ tagSeq1A_PPG2 = tagSeq1A_PPG22[0];
+ ledSeq1A_PPG2 = ledSeq1A_PPG22[0];
+
+ tagSeq1B_PPG1 = tagSeq1B_PPG11[0];
+ ledSeq1B_PPG1 = ledSeq1B_PPG11[0];
+ tagSeq1B_PPG2 = tagSeq1B_PPG22[0];
+ ledSeq1B_PPG2 = ledSeq1B_PPG22[0];
+
+ tagSeq2A_PPG1 = tagSeq2A_PPG11[0];
+ ledSeq2A_PPG1 = ledSeq2A_PPG11[0];
+ tagSeq2A_PPG2 = tagSeq2A_PPG22[0];
+ ledSeq2A_PPG2 = ledSeq2A_PPG22[0];
+
+ tagSeq2B_PPG1 = tagSeq2B_PPG11[0];
+ ledSeq2B_PPG1 = ledSeq2B_PPG11[0];
+ tagSeq2B_PPG2 = tagSeq2B_PPG22[0];
+ ledSeq2B_PPG2 = ledSeq2B_PPG22[0];
        }
 }
+
     clearInt();
 }
 
@@ -734,11 +858,14 @@ else{
 
 
 //axis=0, freedom degre=0
-float MAX86141::signaltonoise(Elements signalBuff, int len){
+float MAX86141::signaltonoise(int* signalBuff, int len){
   // STEP 1, FIND THE MEAN.
    long sum = 0L ;  // sum will be larger than an item, long for safety.
-  for (int i : signalBuff) {
-    sum += i ;}
+  /*for (int i : signalBuff) {
+    sum += i ;}*/
+   for(int i=0; i<len; i++){
+    sum += signalBuff[i] ;
+   }
     float mean = sum/(float)len;
 
    // STEP 2, sum the squares of the differences from the mean
