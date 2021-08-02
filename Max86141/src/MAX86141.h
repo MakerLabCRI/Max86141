@@ -255,9 +255,10 @@ WRITE LEDC6[3:0] to 0x0;
 WRITE SHDN[0] to 0x0; // Start Sampling STOP;
 */
 #define SIZE 20
-//#define FIFO_SAMPLES (128-0x10) // FIFO_A_FULL[6:0] = 0x10
-#define FIFO_SAMPLES (128-0x7A) // FIFO_A_FULL[6:0] = 0x7A
-
+//#define FIFO_SAMPLES (128-0x10) // FIFO_A_FULL[6:0] = 0x10 =16
+#define FIFO_SAMPLES (128-0x78) // FIFO_A_FULL[6:0] = 0x78 = 120
+//#define FIFO_SAMPLES 128 // FIFO_A_FULL[6:0] = 0
+//#define FIFO_SAMPLES (128-0x64) // FIFO_A_FULL[6:0] = 0x64 = 100
 class MAX86141 {
 
   public:
@@ -270,23 +271,21 @@ class MAX86141 {
     bool debug = false;
     
     //Buffer to store data for using SNR (Signal to Noise Ratio)   
-    typedef Vector<int> Elements;
-    int storage_array[SIZE];
-    Elements signalData_ledSeq1A_PPG1, signalData_ledSeq1B_PPG1, signalData_ledSeq2A_PPG1, signalData_ledSeq2B_PPG1;
-    Elements signalData_ledSeq3A_PPG1, signalData_ledSeq3B_PPG1;
-    Elements signalData_ledSeq1A_PPG2, signalData_ledSeq1B_PPG2, signalData_ledSeq2A_PPG2, signalData_ledSeq2B_PPG2;
-    Elements signalData_ledSeq3A_PPG2, signalData_ledSeq3B_PPG2;
-   
-    // SNR Function
-    float signaltonoise(Elements signalBuff, int len);
+    int signalData_ledSeq1A_PPG1[SIZE],  signalData_ledSeq1A_PPG2[SIZE];
     
+    // SNR (Signal to Noise Ratio) Function
+    float signaltonoise(int* signalBuff, int len);
+
     //Functions
     void init(int setSpiClk);
     void write_reg(uint8_t address, uint8_t data_in);
     uint8_t read_reg(uint8_t address);
     void fifo_intr();
     void read_fifo(uint8_t data_buffer[], int count);
-    void device_data_read(uint8_t *dataBuf, int items_fifo);
+    //void device_data_read1(uint8_t *dataBuf, int items_fifo);
+    void device_data_read1();
+    void device_data_read(uint8_t *dataBuf,int items_fifo);
+
     void setSS(int pin);
     void setSPI(SPIClass * newspi);
     void setSpiClk(int newSpiClk);
@@ -314,48 +313,51 @@ class MAX86141 {
     int getPulse_width();
     int getADCRange();
  
-    int* get_ledSeq1A_PPG1();
-    int* get_tagSeq1A_PPG1();
-    int* get_ledSeq1B_PPG1();
-    int* get_tagSeq1B_PPG1();
-    int* get_ledSeq2A_PPG1();
-    int* get_tagSeq2A_PPG1();
-    int* get_ledSeq2B_PPG1();
-    int* get_tagSeq2B_PPG1();
-    int* get_ledSeq3A_PPG1();
-    int* get_tagSeq3A_PPG1();
-    int* get_ledSeq3B_PPG1();
-    int* get_tagSeq3B_PPG1();
-    int* get_ledSeq1A_PPG2();
-    int* get_tagSeq1A_PPG2();
-    int* get_ledSeq1B_PPG2();
-    int* get_tagSeq1B_PPG2();
-    int* get_ledSeq2A_PPG2();
-    int* get_tagSeq2A_PPG2();
-    int* get_ledSeq2B_PPG2(); 
-    int* get_tagSeq2B_PPG2();
-    int* get_ledSeq3A_PPG2();
-    int* get_tagSeq3A_PPG2();
-    int* get_ledSeq3B_PPG2();
-    int* get_tagSeq3B_PPG2();
+    int get_ledSeq1A_PPG1();
+    int get_tagSeq1A_PPG1();
+    int get_ledSeq1B_PPG1();
+    int get_tagSeq1B_PPG1();
+    int get_ledSeq2A_PPG1();
+    int get_tagSeq2A_PPG1();
+    int get_ledSeq2B_PPG1();
+    int get_tagSeq2B_PPG1();
+    int get_ledSeq3A_PPG1();
+    int get_tagSeq3A_PPG1();
+    int get_ledSeq3B_PPG1();
+    int get_tagSeq3B_PPG1();
+
+    int get_ledSeq1A_PPG2();
+    int get_tagSeq1A_PPG2();
+    int get_ledSeq1B_PPG2();
+    int get_tagSeq1B_PPG2();
+    int get_ledSeq2A_PPG2();
+    int get_tagSeq2A_PPG2();
+    int get_ledSeq2B_PPG2(); 
+    int get_tagSeq2B_PPG2();
+    int get_ledSeq3A_PPG2();
+    int get_tagSeq3A_PPG2();
+    int get_ledSeq3B_PPG2();
+    int get_tagSeq3B_PPG2();
     
+
     private :
      
     // Seq1A_PPG1 : Sequence control 1 A (0-3 bits) PPG1 
     // Seq1B_PPG2 : Sequence control 1 B (4-7 bits) PPG2
-    int ledSeq1A_PPG1[128], tagSeq1A_PPG1[128];
-    int ledSeq1B_PPG1[128], tagSeq1B_PPG1[128];
-    int ledSeq2A_PPG1[128], tagSeq2A_PPG1[128];
-    int ledSeq2B_PPG1[128], tagSeq2B_PPG1[128];
-    int ledSeq3A_PPG1[128], tagSeq3A_PPG1[128];
-    int ledSeq3B_PPG1[128], tagSeq3B_PPG1[128];
+    int ledSeq1A_PPG1, tagSeq1A_PPG1;
+    int ledSeq1B_PPG1, tagSeq1B_PPG1;
+    int ledSeq2A_PPG1, tagSeq2A_PPG1;
+    int ledSeq2B_PPG1, tagSeq2B_PPG1;
+    int ledSeq3A_PPG1, tagSeq3A_PPG1;
+    int ledSeq3B_PPG1, tagSeq3B_PPG1;
 
-    int ledSeq1A_PPG2[128], tagSeq1A_PPG2[128];
-    int ledSeq1B_PPG2[128], tagSeq1B_PPG2[128];
-    int ledSeq2A_PPG2[128], tagSeq2A_PPG2[128];
-    int ledSeq2B_PPG2[128], tagSeq2B_PPG2[128];
-    int ledSeq3A_PPG2[128], tagSeq3A_PPG2[128];
-    int ledSeq3B_PPG2[128], tagSeq3B_PPG2[128];
+    int ledSeq1A_PPG2, tagSeq1A_PPG2;
+    int ledSeq1B_PPG2, tagSeq1B_PPG2;
+    int ledSeq2A_PPG2, tagSeq2A_PPG2;
+    int ledSeq2B_PPG2, tagSeq2B_PPG2;
+    int ledSeq3A_PPG2, tagSeq3A_PPG2;
+    int ledSeq3B_PPG2, tagSeq3B_PPG2;
+    
     
     uint8_t       m_tx_buf[3];                       /**< TX buffer. */
     uint8_t       m_rx_buf[3];                       /**< RX buffer. */
