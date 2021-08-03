@@ -13,13 +13,3 @@ You can also find [here](https://github.com/prashnts) the github of our collabor
 ### Example of heart rate graph obtained with Max86141 (1 Photodiode and 2 Leds)
 ![Capture d’écran 2021-06-09 à 10 55 15](https://user-images.githubusercontent.com/47628329/121325570-02e3a600-c912-11eb-9c8e-112cf1a5d947.png)
 
-### Vector : Library Information
-> Name : Vector
-<br/> Version : 1.2.1
-<br/> URL : https://github.com/janelia-arduino/Vector
-<br/> Author : Peter Polidoro
-
-### Streaming : Library Information
-> Name : Streaming
-<br/> Version : 6.0.9
-<br/> Author : Mikal Hart
