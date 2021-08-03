@@ -38,11 +38,6 @@
 *******************************************************************************
 */
 
-///////// VECTOR /////////////
-#include <Arduino.h>
-#include <Streaming.h>
-#include <Vector.h>
-/////////////////////////////
 
 #if ARDUINO >= 100
  #include "Arduino.h"
