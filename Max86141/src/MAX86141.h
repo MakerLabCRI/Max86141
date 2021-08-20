@@ -62,6 +62,7 @@
 #define REG_OVF_COUNTER        (0x06)      //Over Flow Counter
 #define REG_FIFO_DATA_COUNT    (0x07)      //FIFO Data Counter
 #define REG_FIFO_DATA          (0x08)      //FIFO Data Register
+
 #define REG_FIFO_CONFIG_1      (0x09)      //FIFO Configuration 1
 #define REG_FIFO_CONFIG_2      (0x0A)      //FIFO Configuration 2
 #define REG_MODE_CONFIG        (0x0D)      //System Control
@@ -131,16 +132,6 @@ the highest available sample rate will be automatically set. The user can read b
 ADC Output is 18 bits. Number of exposures controlled in LED sequence registers (1 to 6)
 PPG_SR (sampling rate).
 Hex         SPS     Pulses per Sample
-0x0A        8       1
-0x0B        16      1
-0x0C        32      1
-0x0D        64      1
-0x0E        128     1
-0x0F        256     1
-0x10        512     1
-0x11        1024    1
-0x12        2048    1
-0x13        4096    1
 0x00        25      1
 0x01        50      1
 0x02        84      1
@@ -151,6 +142,17 @@ Hex         SPS     Pulses per Sample
 0x07        50      2
 0x08        84      2
 0x09        100     2
+0x0A        8       1
+0x0B        16      1
+0x0C        32      1
+0x0D        64      1
+0x0E        128     1
+0x0F        256     1
+0x10        512     1
+0x11        1024    1
+0x12        2048    1
+0x13        4096    1
+
 Sample Average SMP_AVE
 Hex     Sample Average
 0x0     1
@@ -258,15 +260,18 @@ class MAX86141 {
 
   public:
 
- void initialisation(int ppg, int *ledMd, int size_led, int nb_leds, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int spiClk);
+ void initialisation(int pd, int *ledMd, int size_led, int nb_leds, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int spiClk);
     //THESE NEED TO BE SET UP MANUALLY
     SPIClass * spi = NULL;
     int SS;
     int spiClk = 1000000; //8MHz clock on MAX86141 Max, only 200KHz necessary.
     bool debug = false;
     
+    long samplesTaken1 = 0; //Counter for calculating the Hz or read rate
+    long startTime1;
+   
     //Buffer to store data for using SNR (Signal to Noise Ratio)   
-    int signalData_ledSeq1A_PPG1[SIZE],  signalData_ledSeq1A_PPG2[SIZE];
+    int signalData_ledSeq1A_PD1[SIZE],  signalData_ledSeq1A_PD2[SIZE];
     
     // SNR (Signal to Noise Ratio) Function
     float signaltonoise(int* signalBuff, int len);
@@ -277,9 +282,8 @@ class MAX86141 {
     uint8_t read_reg(uint8_t address);
     void fifo_intr();
     void read_fifo(uint8_t data_buffer[], int count);
-    //void device_data_read1(uint8_t *dataBuf, int items_fifo);
-    void device_data_read1();
-    void device_data_read(uint8_t *dataBuf,int items_fifo);
+    
+    int device_data_read1();
 
     void setSS(int pin);
     void setSPI(SPIClass * newspi);
@@ -287,7 +291,8 @@ class MAX86141 {
     void setDebug(bool setdebug);
     void clearInt();
     
-    void setNumbPPG(int ppg);
+    /* SETs */
+    void setNumbPD(int pd);
     void setLedMode(int *ledMd);
     void setNumLeds(int nb_leds);
     void setIntensityLed(int intens_led);
@@ -296,10 +301,9 @@ class MAX86141 {
     void setADCrange(int adc);
     void setLedModeSize(int size_led);
     
-    void irqHandler(void);
-    
+    /* GETs */
     int getledModeSize();
-    int getNbPPG();
+    int getNbPD();
     int* getLedMode();
     int getNbLeds();
     int getIntensityLed();
@@ -308,50 +312,51 @@ class MAX86141 {
     int getPulse_width();
     int getADCRange();
  
-    int get_ledSeq1A_PPG1();
-    int get_tagSeq1A_PPG1();
-    int get_ledSeq1B_PPG1();
-    int get_tagSeq1B_PPG1();
-    int get_ledSeq2A_PPG1();
-    int get_tagSeq2A_PPG1();
-    int get_ledSeq2B_PPG1();
-    int get_tagSeq2B_PPG1();
-    int get_ledSeq3A_PPG1();
-    int get_tagSeq3A_PPG1();
-    int get_ledSeq3B_PPG1();
-    int get_tagSeq3B_PPG1();
+    int get_ledSeq1A_PD1();
+    int get_tagSeq1A_PD1();
+    int get_ledSeq1B_PD1();
+    int get_tagSeq1B_PD1();
+    int get_ledSeq2A_PD1();
+    int get_tagSeq2A_PD1();
+    int get_ledSeq2B_PD1();
+    int get_tagSeq2B_PD1();
+    int get_ledSeq3A_PD1();
+    int get_tagSeq3A_PD1();
+    int get_ledSeq3B_PD1();
+    int get_tagSeq3B_PD1();
 
-    int get_ledSeq1A_PPG2();
-    int get_tagSeq1A_PPG2();
-    int get_ledSeq1B_PPG2();
-    int get_tagSeq1B_PPG2();
-    int get_ledSeq2A_PPG2();
-    int get_tagSeq2A_PPG2();
-    int get_ledSeq2B_PPG2(); 
-    int get_tagSeq2B_PPG2();
-    int get_ledSeq3A_PPG2();
-    int get_tagSeq3A_PPG2();
-    int get_ledSeq3B_PPG2();
-    int get_tagSeq3B_PPG2();
+    int get_ledSeq1A_PD2();
+    int get_tagSeq1A_PD2();
+    int get_ledSeq1B_PD2();
+    int get_tagSeq1B_PD2();
+    int get_ledSeq2A_PD2();
+    int get_tagSeq2A_PD2();
+    int get_ledSeq2B_PD2(); 
+    int get_tagSeq2B_PD2();
+    int get_ledSeq3A_PD2();
+    int get_tagSeq3A_PD2();
+    int get_ledSeq3B_PD2();
+    int get_tagSeq3B_PD2();
     
-
+    int *tab_ledSeq1A_PD1= NULL;
+    int *tab_ledSeq1A_PD2= NULL;
     private :
      
-    // Seq1A_PPG1 : Sequence control 1 A (0-3 bits) PPG1 
-    // Seq1B_PPG2 : Sequence control 1 B (4-7 bits) PPG2
-    int ledSeq1A_PPG1, tagSeq1A_PPG1;
-    int ledSeq1B_PPG1, tagSeq1B_PPG1;
-    int ledSeq2A_PPG1, tagSeq2A_PPG1;
-    int ledSeq2B_PPG1, tagSeq2B_PPG1;
-    int ledSeq3A_PPG1, tagSeq3A_PPG1;
-    int ledSeq3B_PPG1, tagSeq3B_PPG1;
+    // Seq1A_PPG1 : Sequence control 1 A (0-3 bits) PD1 
+    // Seq1B_PPG2 : Sequence control 1 B (4-7 bits) PD2
+    int ledSeq1A_PD1, tagSeq1A_PD1;
+    int ledSeq1B_PD1, tagSeq1B_PD1;
+    int ledSeq2A_PD1, tagSeq2A_PD1;
+    int ledSeq2B_PD1, tagSeq2B_PD1;
+    int ledSeq3A_PD1, tagSeq3A_PD1;
+    int ledSeq3B_PD1, tagSeq3B_PD1;
 
-    int ledSeq1A_PPG2, tagSeq1A_PPG2;
-    int ledSeq1B_PPG2, tagSeq1B_PPG2;
-    int ledSeq2A_PPG2, tagSeq2A_PPG2;
-    int ledSeq2B_PPG2, tagSeq2B_PPG2;
-    int ledSeq3A_PPG2, tagSeq3A_PPG2;
-    int ledSeq3B_PPG2, tagSeq3B_PPG2;
+    int ledSeq1A_PD2, tagSeq1A_PD2;
+    int ledSeq1B_PD2, tagSeq1B_PD2;
+    int ledSeq2A_PD2, tagSeq2A_PD2;
+    int ledSeq2B_PD2, tagSeq2B_PD2;
+    int ledSeq3A_PD2, tagSeq3A_PD2;
+    int ledSeq3B_PD2, tagSeq3B_PD2;
     
     
     uint8_t       m_tx_buf[3];                       /**< TX buffer. */
@@ -359,7 +364,7 @@ class MAX86141 {
     const uint8_t m_length = sizeof(m_tx_buf);       /**< Transfer length. */
     
     int ledModeSize;
-    int nb_ppg;
+    int nb_pd;
     int *ledMode;
     int number_leds;
     int intensity_led;
