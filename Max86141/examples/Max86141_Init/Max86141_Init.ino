@@ -19,10 +19,6 @@
 
 static int spiClk = 1000000; // 8 MHz Maximum
 
-bool RED_ON = false;
-bool IR_ON = false;
-bool AMBIENT = true;
-float RED_AVG, IR_AVG, AMBIENT_AVG;
 
 //
 // Pin Definitions.
@@ -58,7 +54,7 @@ void setup() {
   pulseOx1.setDebug(true);
 #ifdef PDsLED
   int LedMode[] = {1/*LED1 (Sequence 1, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 1, 4-7)*/};
-  pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 2/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 8/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
+  pulseOx1.initialisation(2/*nb_pds*/, LedMode/*LedMode*/, 2/*Number of sequences*/, 1/*Number of LEDs*/, 10/*intensity_LEDs*/, 0x5/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDLEDs
@@ -68,7 +64,7 @@ void setup() {
 
 #ifdef PDsLEDs
   int LedMode[]={1/*LED1 (Sequence 1, 0-3)*/, 2/*LED2 (Sequence 1, 4-7)*/,3/*LED3 (Sequence 2, 0-3)*/, 9/*DIRECT AMBIENT (Sequence 2, 4-7)*/};
-  pulseOx1.initialisation(2/*nb_ppg*/,LedMode/*LedMode*/,4/*Number of sequences*/,3/*Number of LEDs*/,4/*intensity_LEDs*/,8/*sample_average*/, 0x0E/*sample_rate*/,0x3/*pulse width*/,0x2/*ADC Range= 16uA*/,spiClk);
+  pulseOx1.initialisation(2/*nb_ppg*/,LedMode/*LedMode*/,4/*Number of sequences*/,3/*Number of LEDs*/,4/*intensity_LEDs*/,0x3/*sample_average*/, 0x0E/*sample_rate*/,0x3/*pulse width*/,0x2/*ADC Range= 16uA*/,spiClk);
 #endif
 
   Serial.println("--Read Register-- System Control");
@@ -90,151 +86,160 @@ void setup() {
 
 void loop() {
 
-  uint8_t intStatus;
+   uint8_t intStatus;
   //Read Status
   intStatus = pulseOx1.read_reg(REG_INT_STAT_1);
-  int fifo_size;
-  fifo_size = pulseOx1.read_reg(REG_FIFO_DATA_COUNT);
-  // Serial.println("fifo_size1 : "+String(fifo_size));
+  bool flagA_full = (intStatus & 0x80) >> 7;
 
-  if ((intStatus & 0x80) && ((fifo_size >= 8) || (fifo_size < 12))) {
-      pulseOx1.device_data_read1();
-#ifdef PDsLED
-    Serial.println("LED 1 Seq 1 A - PPG1 channel : ");
-    int ledSeq1A_PPG1 = pulseOx1.get_ledSeq1A_PPG1();
-    Serial.println(ledSeq1A_PPG1);
+/////// if there is 8 samples in the FIFO ///////
+  if (flagA_full) {
+    int fifo_size = pulseOx1.device_data_read1();
     
+#ifdef PDsLED
+    //Serial.println("Reading all 8 samples from PD1: ");
+     for(int i=0; i<fifo_size/2;i++){
+      Serial.println(pulseOx1.tab_ledSeq1A_PD1[i]);
+      }
+     Serial.println("Reading all 8 samples from PD2: ");
+     for(int i=0; i<fifo_size/2;i++){
+      Serial.println(pulseOx1.tab_ledSeq1A_PD2[i]);
+      }
+
+    Serial.println("Reading first sample from PD1: ");
+    int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
+    //Serial.println(ledSeq1A_PD1);
+
     ///////////// Add in buffer for SNR //////////
-    pulseOx1.signalData_ledSeq1A_PPG1[cpt1] = ledSeq1A_PPG1;
-      
-    cpt1 += 1;
+    pulseOx1.signalData_ledSeq1A_PD1[cpt1] = pulseOx1.tab_ledSeq1A_PD1[0];
+    pulseOx1.signalData_ledSeq1A_PD1[cpt1+1] = pulseOx1.tab_ledSeq1A_PD1[1];
+    pulseOx1.signalData_ledSeq1A_PD1[cpt1+2] = pulseOx1.tab_ledSeq1A_PD1[2];
+    pulseOx1.signalData_ledSeq1A_PD1[cpt1+3] = pulseOx1.tab_ledSeq1A_PD1[3];
+    uint32_t timestamp = millis();
+
+   cpt1 += 4;
     if (cpt1 == SIZE) {
-      Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PPG1, SIZE)));
+      //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD1, SIZE)));
       cpt1 = 0;
     }
-    
-    Serial.println("TAG of LED 1 Seq 1 A - PPG1 channel : ");
-    int tagSeq1A_PPG1 = pulseOx1.get_tagSeq1A_PPG1();
-    Serial.println(tagSeq1A_PPG1);
-    Serial.println("LED 1 Seq 1 A - PPG2 channel : ");
-    int ledSeq1A_PPG2 = pulseOx1.get_ledSeq1A_PPG2();
-    Serial.println(ledSeq1A_PPG2);
-    
+
+    Serial.println("Reading first sample from PD2: ");
+    int ledSeq1A_PD2 = pulseOx1.get_ledSeq1A_PD2();
+    //Serial.println(ledSeq1A_PD2);
     ///////////// Add in buffer for SNR //////////
-    pulseOx1.signalData_ledSeq1A_PPG2[cpt2] = ledSeq1A_PPG2;
-    
-    cpt2 += 1;
+   // pulseOx1.signalData_ledSeq1A_PD2[cpt2] = ledSeq1A_PD2;
+    pulseOx1.signalData_ledSeq1A_PD2[cpt2] = pulseOx1.tab_ledSeq1A_PD2[0];
+    pulseOx1.signalData_ledSeq1A_PD2[cpt2+1] = pulseOx1.tab_ledSeq1A_PD2[1];
+    pulseOx1.signalData_ledSeq1A_PD2[cpt2+2] = pulseOx1.tab_ledSeq1A_PD2[2];
+    pulseOx1.signalData_ledSeq1A_PD2[cpt2+3] = pulseOx1.tab_ledSeq1A_PD2[3];
+
+    cpt2 += 4;
     if (cpt2 == SIZE) {
-      Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PPG2, SIZE)));
+      //Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
       cpt2 = 0;
     }
-    Serial.println("TAG of LED 1 Seq 1 A - PPG2  channel : ");
-    int tagSeq1A_PPG2 = pulseOx1.get_tagSeq1A_PPG2();
-    Serial.println(tagSeq1A_PPG2);
-    Serial.println("Direct ambient - PPG1 channel : ");
-    int ledSeq1B_PPG1 = pulseOx1.get_ledSeq1B_PPG1();
-    Serial.println(ledSeq1B_PPG1);
-    Serial.println("TAG Direct ambient - PPG1 channel : ");
-    int tagSeq1B_PPG1 = pulseOx1.get_tagSeq1B_PPG1();
-    Serial.println(tagSeq1B_PPG1);
-    Serial.println("Direct ambient - PPG2 channel : ");
-    int ledSeq1B_PPG2 = pulseOx1.get_ledSeq1B_PPG2();
-    Serial.println(ledSeq1B_PPG2);
-    Serial.println("TAG Direct ambient - PPG2 channel : ");
-    int tagSeq1B_PPG2 = pulseOx1.get_tagSeq1B_PPG2();
-    Serial.println(tagSeq1B_PPG2);
 
-    Serial.println("LED AVERAGE");
-    int led_avg = (ledSeq1A_PPG1 + ledSeq1A_PPG2) * 0.5;
-    Serial.println(led_avg);
-    Serial.println("Direct ambient AVERAGE");
-    int ambient_avg = (ledSeq1B_PPG1 + ledSeq1B_PPG2) * 0.5;
-    Serial.println(ambient_avg);
+    free(pulseOx1.tab_ledSeq1A_PD1);
+    free(pulseOx1.tab_ledSeq1A_PD2);
+          /*Serial.println("LED 1 Seq 1 A - PD1 channel : ");
+          Serial.println(ledSeq1A_PD1);
+          Serial.println("TAG of LED 1 Seq 1 A - PD1 channel : ");
+          int tagSeq1A_PD1 = pulseOx1.get_tagSeq1A_PD1();
+          Serial.println(tagSeq1A_PD1);
+          Serial.println("LED 1 Seq 1 A - PD2 channel : ");
+          Serial.println(ledSeq1A_PD2);
+          Serial.println("TAG of LED 1 Seq 1 A - PD2  channel : ");
+          int tagSeq1A_PD2 = pulseOx1.get_tagSeq1A_PD2();
+          Serial.println(tagSeq1A_PD2);
+          Serial.println("LED AVERAGE");
+          int led_avg = (ledSeq1A_PD1 + ledSeq1A_PD2) * 0.5;
+          Serial.println(led_avg);*/    
 #endif
 
 #ifdef PDLEDs
 
-     Serial.println("LED 1 & LED 2 Seq 1 A - PPG1 channel : ");
-     int ledSeq1A_PPG1 = pulseOx1.get_ledSeq1A_PPG1();
-     Serial.println(ledSeq1A_PPG1);
-     Serial.println("TAG of LED 1 & LED 2 Seq 1 A - PPG1 channel : ");
-     int tagSeq1A_PPG1 = pulseOx1.get_tagSeq1A_PPG1();
-     Serial.println(tagSeq1A_PPG1);
-     Serial.println("Direct ambient - PPG1 channel : ");
-     int ledSeq1B_PPG1 = pulseOx1.get_ledSeq1B_PPG1();
-     Serial.println(ledSeq1B_PPG1);
-     Serial.println("TAG Direct ambient - PPG1 channel : ");
-     int tagSeq1B_PPG1 = pulseOx1.get_tagSeq1B_PPG1();
-     Serial.println(tagSeq1B_PPG1);
-     
-    #endif
+    Serial.println("LED 1 & LED 2 Seq 1 A - PD1 channel : ");
+    int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
+    Serial.println(ledSeq1A_PD1);
+    Serial.println("TAG of LED 1 & LED 2 Seq 1 A - PD1 channel : ");
+    int tagSeq1A_PD1 = pulseOx1.get_tagSeq1A_PD1();
+    Serial.println(tagSeq1A_PD1);
+    Serial.println("Direct ambient - PD1 channel : ");
+    int ledSeq1B_PD1 = pulseOx1.get_ledSeq1B_PD1();
+    Serial.println(ledSeq1B_PD1);
+    Serial.println("TAG Direct ambient - PD1 channel : ");
+    int tagSeq1B_PD1 = pulseOx1.get_tagSeq1B_PD1();
+    Serial.println(tagSeq1B_PD1);
+
+#endif
+
 #ifdef PDsLEDs
-     Serial.println("LED 1 Seq 1 A - PPG1 channel : ");
-     int ledSeq1A_PPG1 = pulseOx1.get_ledSeq1A_PPG1();
-     Serial.println(ledSeq1A_PPG1);
-     Serial.println("TAG Seq 1 A - PPG1 channel : ");
-       int tagSeq1A_PPG1 = pulseOx1.get_tagSeq1A_PPG1();
-       Serial.println(tagSeq1A_PPG1);
-       Serial.println("LED 1 Seq 1 A - PPG2 channel : ");
-       int ledSeq1A_PPG2 = pulseOx1.get_ledSeq1A_PPG2();
-       Serial.println(ledSeq1A_PPG2);
-       Serial.println("TAG Seq 1 A - PPG2  channel : ");
-       int tagSeq1A_PPG2 = pulseOx1.get_tagSeq1A_PPG2();
-       Serial.println(tagSeq1A_PPG2);
 
-       Serial.println("LED 2 Seq 1 B - PPG1 channel : ");
-       int ledSeq1B_PPG1 = pulseOx1.get_ledSeq1B_PPG1();
-       Serial.println(ledSeq1B_PPG1);
-       Serial.println("TAG of LED 2 Seq 1 B - PPG1 channel : ");
-       int tagSeq1B_PPG1 = pulseOx1.get_tagSeq1B_PPG1();
-       Serial.println(tagSeq1B_PPG1);
-       Serial.println("LED 2 Seq 1 B - PPG2 channel : ");
-       int ledSeq1B_PPG2 = pulseOx1.get_ledSeq1B_PPG2();
-       Serial.println(ledSeq1B_PPG2);
-       Serial.println("TAG of LED 2 Seq 1 B - PPG2  channel : ");
-       int tagSeq1B_PPG2 = pulseOx1.get_tagSeq1A_PPG2();
-       Serial.println(tagSeq1A_PPG2);
+    Serial.println("LED 1 Seq 1 A - PD1 channel : ");
+    int ledSeq1A_PD1 = pulseOx1.get_ledSeq1A_PD1();
+    Serial.println(ledSeq1A_PD1);
+    Serial.println("TAG Seq 1 A - PD1 channel : ");
+    int tagSeq1A_PD1 = pulseOx1.get_tagSeq1A_PD1();
+    Serial.println(tagSeq1A_PD1);
+    Serial.println("LED 1 Seq 1 A - PD2 channel : ");
+    int ledSeq1A_PD2 = pulseOx1.get_ledSeq1A_PD2();
+    Serial.println(ledSeq1A_PD2);
+    Serial.println("TAG Seq 1 A - PD2  channel : ");
+    int tagSeq1A_PD2 = pulseOx1.get_tagSeq1A_PD2();
+    Serial.println(tagSeq1A_PD2);
 
-       Serial.println(" LED 3 Seq 2 A - PPG1 channel : ");
-       int ledSeq2A_PPG1 = pulseOx1.get_ledSeq2A_PPG1();
-       Serial.println(ledSeq2A_PPG1);
-       Serial.println("TAG of LED 3 Seq 2 A - PPG1 channel : ");
-       int tagSeq2A_PPG1 = pulseOx1.get_tagSeq2A_PPG1();
-       Serial.println(tagSeq2A_PPG1);
-       Serial.println(" LED 3 Seq 2 A - PPG2 channel : ");
-       int ledSeq2A_PPG2 = pulseOx1.get_ledSeq2A_PPG2();
-       Serial.println(ledSeq2A_PPG2);
-       Serial.println("TAG of LED 3 Seq 2 A - PPG2  channel : ");
-       int tagSeq2A_PPG2 = pulseOx1.get_tagSeq2A_PPG2();
-       Serial.println(tagSeq2A_PPG2);
+    Serial.println("LED 2 Seq 1 B - PD1 channel : ");
+    int ledSeq1B_PD1 = pulseOx1.get_ledSeq1B_PD1();
+    Serial.println(ledSeq1B_PD1);
+    Serial.println("TAG of LED 2 Seq 1 B - PD1 channel : ");
+    int tagSeq1B_PD1 = pulseOx1.get_tagSeq1B_PD1();
+    Serial.println(tagSeq1B_PD1);
+    Serial.println("LED 2 Seq 1 B - PD2 channel : ");
+    int ledSeq1B_PD2 = pulseOx1.get_ledSeq1B_PD2();
+    Serial.println(ledSeq1B_PD2);
+    Serial.println("TAG of LED 2 Seq 1 B - PD2  channel : ");
+    int tagSeq1B_PD2 = pulseOx1.get_tagSeq1A_PD2();
+    Serial.println(tagSeq1A_PD2);
 
-       Serial.println("Direct ambient Seq 2 B - PPG1 channel : ");
-       int ledSeq2B_PPG1 = pulseOx1.get_ledSeq2B_PPG1();
-       Serial.println(ledSeq2B_PPG1);
-       Serial.println("TAG Direct ambient Seq 2 B - PPG1 channel : ");
-       int tagSeq2B_PPG1 = pulseOx1.get_tagSeq2B_PPG1();
-       Serial.println(tagSeq2B_PPG1);
-       Serial.println("Direct ambient Seq 2 B - PPG2 channel : ");
-       int ledSeq2B_PPG2 = pulseOx1.get_ledSeq2B_PPG2();
-       Serial.println(ledSeq2B_PPG2);
-       Serial.println("TAG Direct ambient Seq 2 B - PPG2 channel : ");
-       int tagSeq2B_PPG2 = pulseOx1.get_tagSeq2B_PPG2();
-       Serial.println(tagSeq2B_PPG2);
+    Serial.println(" LED 3 Seq 2 A - PD1 channel : ");
+    int ledSeq2A_PD1 = pulseOx1.get_ledSeq2A_PD1();
+    Serial.println(ledSeq2A_PD1);
+    Serial.println("TAG of LED 3 Seq 2 A - PD1 channel : ");
+    int tagSeq2A_PD1 = pulseOx1.get_tagSeq2A_PD1();
+    Serial.println(tagSeq2A_PD1);
+    Serial.println(" LED 3 Seq 2 A - PD2 channel : ");
+    int ledSeq2A_PD2 = pulseOx1.get_ledSeq2A_PD2();
+    Serial.println(ledSeq2A_PD2);
+    Serial.println("TAG of LED 3 Seq 2 A - PD2  channel : ");
+    int tagSeq2A_PD2 = pulseOx1.get_tagSeq2A_PD2();
+    Serial.println(tagSeq2A_PD2);
 
-       Serial.println("LED 1 AVERAGE");
-       int led1_avg = (ledSeq1A_PPG1+ledSeq1A_PPG2)*0.5;
-       Serial.println(led1_avg);
-       Serial.println("LED 2 AVERAGE");
-       int led2_avg = (ledSeq1B_PPG1+ledSeq1B_PPG2)*0.5;
-       Serial.println(led2_avg);
-       Serial.println("LED 3 AVERAGE");
-       int led_avg = (ledSeq2A_PPG1+ledSeq2A_PPG2)*0.5;
-       Serial.println(led_avg);
-       Serial.println("Direct ambient AVERAGE");
-       int ambient_avg = (ledSeq2B_PPG1+ledSeq2B_PPG2)*0.5;
-       Serial.println(ambient_avg);
+    Serial.println("Direct ambient Seq 2 B - PD1 channel : ");
+    int ledSeq2B_PD1 = pulseOx1.get_ledSeq2B_PD1();
+    Serial.println(ledSeq2B_PD1);
+    Serial.println("TAG Direct ambient Seq 2 B - PPG1 channel : ");
+    int tagSeq2B_PD1 = pulseOx1.get_tagSeq2B_PD1();
+    Serial.println(tagSeq2B_PD1);
+    Serial.println("Direct ambient Seq 2 B - PD2 channel : ");
+    int ledSeq2B_PD2 = pulseOx1.get_ledSeq2B_PD2();
+    Serial.println(ledSeq2B_PD2);
+    Serial.println("TAG Direct ambient Seq 2 B - PD2 channel : ");
+    int tagSeq2B_PD2 = pulseOx1.get_tagSeq2B_PD2();
+    Serial.println(tagSeq2B_PD2);
 
-    #endif
+    Serial.println("LED 1 AVERAGE");
+    int led1_avg = (ledSeq1A_PD1 + ledSeq1A_PD2) * 0.5;
+    Serial.println(led1_avg);
+    Serial.println("LED 2 AVERAGE");
+    int led2_avg = (ledSeq1B_PD1 + ledSeq1B_PD2) * 0.5;
+    Serial.println(led2_avg);
+    Serial.println("LED 3 AVERAGE");
+    int led_avg = (ledSeq2A_PD1 + ledSeq2A_PD2) * 0.5;
+    Serial.println(led_avg);
+    Serial.println("Direct ambient AVERAGE");
+    int ambient_avg = (ledSeq2B_PD1 + ledSeq2B_PD2) * 0.5;
+    Serial.println(ambient_avg);
+   
+#endif
   }
   else {
   //Serial.println("FIFO not A_full");
