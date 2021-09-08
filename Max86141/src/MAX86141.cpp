@@ -329,6 +329,15 @@ uint8_t MAX86141::read_reg(uint8_t address) {
      void MAX86141::setSample(int smpl_avr, int smpl_rate){
       sample_average= smpl_avr;
       sample_rate= smpl_rate;
+//Serial.println("sample_rate"+String(sample_rate));
+      int sample1= sample_rate<<3;
+    //Serial.println(sample1,BIN);
+    int sample2= sample_average>>2;
+    //Serial.println(sample2,BIN);
+    int sample= sample1 + sample2;
+    //Serial.print("Samlple");
+      //    Serial.println(sample,BIN);
+    write_reg(REG_PPG_CONFIG_2, sample); //SPS (0-5), SMP_AVE (6-8)
      }
 ///////////////////////////////////////////////
 
@@ -343,7 +352,7 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       
       
      // write_reg(REG_PICKET_FENCE,0b11000000);
-
+        write_reg(REG_PICKET_FENCE,0b00000000);
       
       //
     // Clear interrupts.
@@ -385,14 +394,14 @@ uint8_t MAX86141::read_reg(uint8_t address) {
     setSample(smpl_avr, smpl_rate);
         //Serial.println(sample_rate,BIN);
 
-    int sample1= sample_rate<<3;
+    /*int sample1= sample_rate<<3;
     //Serial.println(sample1,BIN);
     int sample2= sample_average>>2;
     //Serial.println(sample2,BIN);
     int sample= sample1 + sample2;
     //Serial.print("Samlple");
       //    Serial.println(sample,BIN);
-    write_reg(REG_PPG_CONFIG_2, sample); //SPS (0-5), SMP_AVE (6-8)
+    write_reg(REG_PPG_CONFIG_2, sample); //SPS (0-5), SMP_AVE (6-8)*/
     //write_reg(REG_PPG_CONFIG_3, 0b11000110); //LED_SETLNG, DIG_FILT_SEL, BURST_EN
     write_reg(REG_PPG_CONFIG_3, 0b11000000); //LED_SETLNG, DIG_FILT_SEL, BURST_EN
         ////
@@ -558,9 +567,11 @@ memset(dataBuf, 0, sample_count*3*sizeof(uint8_t));   // Flush buffer
  tab_ledSeq1A_PD1= (int*)malloc((sample_count/2)*sizeof(int));
  tab_ledSeq1A_PD2= (int*)malloc((sample_count/2)*sizeof(int));
 
-    for (i = 0; i < sample_count/2; i++)
+
+    /*for (i = 0; i < sample_count/2; i++)
     {
-        /*for(int j=0; j<8; j++){
+        //// BLE Test ////
+        for(int j=0; j<8; j++){
           if(dataBuf[3*j]>>3 ==1){
         tagSeq1A_PD11[i] = (dataBuf[j*3+0] >> 3) & 0x1f;
         ledSeq1A_PD11[i] = ((dataBuf[j*3+0] << 16) | (dataBuf[j*3+1] << 8) | (dataBuf[j*3+2])) & 0x7ffff;
@@ -571,8 +582,11 @@ memset(dataBuf, 0, sample_count*3*sizeof(uint8_t));   // Flush buffer
         ledSeq1A_PD22[i] = ((dataBuf[j*3+0] << 16) | (dataBuf[j*3+1] << 8) | (dataBuf[j*3+2])) & 0x7ffff;
         tab_ledSeq1A_PD2[i] = ledSeq1A_PD22[i];
         }
-        }*/
+     }
 
+      
+
+        //// for Serial Test ////
         tagSeq1A_PD11[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
         ledSeq1A_PD11[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
  
@@ -580,15 +594,135 @@ memset(dataBuf, 0, sample_count*3*sizeof(uint8_t));   // Flush buffer
         ledSeq1A_PD22[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
 
         tab_ledSeq1A_PD1[i] = ledSeq1A_PD11[i];
-        tab_ledSeq1A_PD2[i] = ledSeq1A_PD22[i];   
+        tab_ledSeq1A_PD2[i] = ledSeq1A_PD22[i]; 
+    }*/
+   
+   /*if(dataBuf[0]>>3 ==1){
+    tagSeq1A_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[0] = ledSeq1A_PD11[0];
+   }
+   else{
+    tagSeq1A_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[0] = ledSeq1A_PD22[0];
+   }
+
+   if(dataBuf[3]>>3 ==1){
+    tagSeq1A_PD11[0] = (dataBuf[3] >> 3) & 0x1f;
+    ledSeq1A_PD11[0] = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
+    tab_ledSeq1A_PD1[0] = ledSeq1A_PD11[0];
+   }
+   else{
+    tagSeq1A_PD22[0] = (dataBuf[3] >> 3) & 0x1f;
+    ledSeq1A_PD22[0] = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
+    tab_ledSeq1A_PD2[0] = ledSeq1A_PD22[0];
+   }
+   
+   if(dataBuf[6]>>3 ==1){
+    tagSeq1A_PD11[1] = (dataBuf[6] >> 3) & 0x1f;
+    ledSeq1A_PD11[1] = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
+    tab_ledSeq1A_PD1[1] = ledSeq1A_PD11[1];
+   }
+   else{
+    tagSeq1A_PD22[1] = (dataBuf[6] >> 3) & 0x1f;
+    ledSeq1A_PD22[1] = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
+    tab_ledSeq1A_PD2[1] = ledSeq1A_PD22[1];
+   }
+
+   if(dataBuf[9]>>3 ==1){
+    tagSeq1A_PD11[1] = (dataBuf[9] >> 3) & 0x1f;
+    ledSeq1A_PD11[1] = ((dataBuf[9] << 16) | (dataBuf[10] << 8) | (dataBuf[11])) & 0x7ffff;
+    tab_ledSeq1A_PD1[1] = ledSeq1A_PD11[1];
+   }
+   else{
+    tagSeq1A_PD22[1] = (dataBuf[9] >> 3) & 0x1f;
+    ledSeq1A_PD22[1] = ((dataBuf[9] << 16) | (dataBuf[10] << 8) | (dataBuf[11])) & 0x7ffff;
+    tab_ledSeq1A_PD2[1] = ledSeq1A_PD22[1];
+   }
+
+   if(dataBuf[12]>>3 ==1){
+    tagSeq1A_PD11[2] = (dataBuf[12] >> 3) & 0x1f;
+    ledSeq1A_PD11[2] = ((dataBuf[12] << 16) | (dataBuf[13] << 8) | (dataBuf[14])) & 0x7ffff;
+    tab_ledSeq1A_PD1[2] = ledSeq1A_PD11[2];
+   }
+   else{
+    tagSeq1A_PD22[2] = (dataBuf[12] >> 3) & 0x1f;
+    ledSeq1A_PD22[2] = ((dataBuf[12] << 16) | (dataBuf[13] << 8) | (dataBuf[14])) & 0x7ffff;
+    tab_ledSeq1A_PD2[2] = ledSeq1A_PD22[2];
+   }
+
+   if(dataBuf[15]>>3 ==1){
+    tagSeq1A_PD11[2] = (dataBuf[15] >> 3) & 0x1f;
+    ledSeq1A_PD11[2] = ((dataBuf[15] << 16) | (dataBuf[16] << 8) | (dataBuf[17])) & 0x7ffff;
+    tab_ledSeq1A_PD1[2] = ledSeq1A_PD11[2];
+   }
+   else{
+    tagSeq1A_PD22[2] = (dataBuf[15] >> 3) & 0x1f;
+    ledSeq1A_PD22[2] = ((dataBuf[15] << 16) | (dataBuf[16] << 8) | (dataBuf[17])) & 0x7ffff;
+    tab_ledSeq1A_PD2[2] = ledSeq1A_PD22[2];
+   }
+
+if(dataBuf[18]>>3 ==1){
+    tagSeq1A_PD11[3] = (dataBuf[18] >> 3) & 0x1f;
+    ledSeq1A_PD11[3] = ((dataBuf[18] << 16) | (dataBuf[19] << 8) | (dataBuf[20])) & 0x7ffff;
+    tab_ledSeq1A_PD1[3] = ledSeq1A_PD11[3];
+   }
+   else{
+    tagSeq1A_PD22[3] = (dataBuf[18] >> 3) & 0x1f;
+    ledSeq1A_PD22[3] = ((dataBuf[18] << 16) | (dataBuf[19] << 8) | (dataBuf[20])) & 0x7ffff;
+    tab_ledSeq1A_PD2[3] = ledSeq1A_PD22[3];
+   }
+
+if(dataBuf[21]>>3 ==1){
+    tagSeq1A_PD11[3] = (dataBuf[21] >> 3) & 0x1f;
+    ledSeq1A_PD11[3] = ((dataBuf[21] << 16) | (dataBuf[22] << 8) | (dataBuf[23])) & 0x7ffff;
+    tab_ledSeq1A_PD1[3] = ledSeq1A_PD11[3];
+   }
+   else{
+    tagSeq1A_PD22[3] = (dataBuf[21] >> 3) & 0x1f;
+    ledSeq1A_PD22[3] = ((dataBuf[21] << 16) | (dataBuf[22] << 8) | (dataBuf[23])) & 0x7ffff;
+    tab_ledSeq1A_PD2[3] = ledSeq1A_PD22[3];
+   }*/
+
+ if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==7) && (dataBuf[6]>>3 ==1) && (dataBuf[9]>>3 ==7) && (dataBuf[12]>>3 ==1)
+    && (dataBuf[15]>>3 ==7) && (dataBuf[18]>>3 ==1) &&(dataBuf[21]>>3 ==7)
+  ){
+  //Serial.println("Dans le if");
+  for (i = 0; i < sample_count/2; i++)
+    {
+        tagSeq1A_PD11[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
+        ledSeq1A_PD11[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+ 
+        tagSeq1A_PD22[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
+        ledSeq1A_PD22[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
+
+        tab_ledSeq1A_PD1[i] = ledSeq1A_PD11[i];
+        tab_ledSeq1A_PD2[i] = ledSeq1A_PD22[i]; 
     }
+ }
+
+  if( (dataBuf[0]>>3 ==7) && (dataBuf[3]>>3 ==1) && (dataBuf[6]>>3 ==7) && (dataBuf[9]>>3 ==1) && (dataBuf[12]>>3 ==7)
+    && (dataBuf[15]>>3 ==1) && (dataBuf[18]>>3 ==7) &&(dataBuf[21]>>3 ==1)
+  ){
+  for (i = 0; i < sample_count/2; i++)
+    {
+        tagSeq1A_PD22[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
+        ledSeq1A_PD22[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+ 
+        tagSeq1A_PD11[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
+        ledSeq1A_PD11[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
+
+        tab_ledSeq1A_PD1[i] = ledSeq1A_PD11[i];
+        tab_ledSeq1A_PD2[i] = ledSeq1A_PD22[i]; 
+    }
+ }
 
   tagSeq1A_PD1 = tagSeq1A_PD11[0];
   ledSeq1A_PD1 = ledSeq1A_PD11[0];
   tagSeq1A_PD2 = tagSeq1A_PD22[0];
   ledSeq1A_PD2 = ledSeq1A_PD22[0];
  
-
   free(dataBuf);
   free(tagSeq1A_PD11);
   free(ledSeq1A_PD11);
@@ -604,9 +738,189 @@ memset(dataBuf, 0, sample_count*3*sizeof(uint8_t));   // Flush buffer
  int *tagSeq1A_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*tagSeq1B_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1B_PD11 = (int*)malloc((sample_count/4)*sizeof(int));
  int *tagSeq1A_PD22 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1A_PD22 = (int*)malloc((sample_count/4)*sizeof(int)),*tagSeq1B_PD22 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1B_PD22 = (int*)malloc((sample_count/4)*sizeof(int));
 
-   //for (i = 0; i < 2; i++)
-    for (i = 0; i < sample_count/4; i++)
-          //for (i = 0; i < FIFO_SAMPLES/4; i++)
+    if(dataBuf[0]>>3 ==1){
+    tagSeq1A_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[0] = ledSeq1A_PD11[0];
+   }
+    if(dataBuf[0]>>3 ==7){
+    tagSeq1A_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[0] = ledSeq1A_PD22[0];
+   }
+    if(dataBuf[0]>>3 ==2){
+    tagSeq1B_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[0] = ledSeq1B_PD11[0];
+   }
+    if(dataBuf[0]>>3 ==8){
+    tagSeq1B_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[0] = ledSeq1B_PD22[0];
+   }
+   
+   /////////////////////////////////////
+   if(dataBuf[3]>>3 ==1){
+    tagSeq1A_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[0] = ledSeq1A_PD11[0];
+   }
+    if(dataBuf[3]>>3 ==7){
+    tagSeq1A_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[0] = ledSeq1A_PD22[0];
+   }
+    if(dataBuf[3]>>3 ==2){
+    tagSeq1B_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[0] = ledSeq1B_PD11[0];
+   }
+    if(dataBuf[3]>>3 ==8){
+    tagSeq1B_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[0] = ledSeq1B_PD22[0];
+   }
+   /////////////////////////////////////
+
+   /////////////////////////////////////
+   if(dataBuf[6]>>3 ==1){
+    tagSeq1A_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[0] = ledSeq1A_PD11[0];
+   }
+    if(dataBuf[6]>>3 ==7){
+    tagSeq1A_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[0] = ledSeq1A_PD22[0];
+   }
+    if(dataBuf[6]>>3 ==2){
+    tagSeq1B_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[0] = ledSeq1B_PD11[0];
+   }
+    if(dataBuf[6]>>3 ==8){
+    tagSeq1B_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[0] = ledSeq1B_PD22[0];
+   }
+   /////////////////////////////////////
+
+   /////////////////////////////////////
+    if(dataBuf[9]>>3 ==1){
+    tagSeq1A_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[0] = ledSeq1A_PD11[0];
+   }
+    if(dataBuf[9]>>3 ==7){
+    tagSeq1A_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[0] = ledSeq1A_PD22[0];
+   }
+    if(dataBuf[9]>>3 ==2){
+    tagSeq1B_PD11[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[0] = ledSeq1B_PD11[0];
+   }
+    if(dataBuf[9]>>3 ==8){
+    tagSeq1B_PD22[0] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[0] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[0] = ledSeq1B_PD22[0];
+   }
+   /////////////////////////////////////
+
+   /////////////////////////////////////
+    if(dataBuf[12]>>3 ==1){
+    tagSeq1A_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[1] = ledSeq1A_PD11[1];
+   }
+    if(dataBuf[12]>>3 ==7){
+    tagSeq1A_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[1] = ledSeq1A_PD22[1];
+   }
+    if(dataBuf[12]>>3 ==2){
+    tagSeq1B_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[1] = ledSeq1B_PD11[1];
+   }
+    if(dataBuf[12]>>3 ==8){
+    tagSeq1B_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[1] = ledSeq1B_PD22[1];
+   }
+   /////////////////////////////////////
+
+   /////////////////////////////////////
+    if(dataBuf[15]>>3 ==1){
+    tagSeq1A_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[1] = ledSeq1A_PD11[1];
+   }
+    if(dataBuf[15]>>3 ==7){
+    tagSeq1A_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[1] = ledSeq1A_PD22[1];
+   }
+    if(dataBuf[15]>>3 ==2){
+    tagSeq1B_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[1] = ledSeq1B_PD11[1];
+   }
+    if(dataBuf[15]>>3 ==8){
+    tagSeq1B_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[1] = ledSeq1B_PD22[1];
+   }
+   /////////////////////////////////////
+
+   /////////////////////////////////////
+    if(dataBuf[18]>>3 ==1){
+    tagSeq1A_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[1] = ledSeq1A_PD11[1];
+   }
+    if(dataBuf[18]>>3 ==7){
+    tagSeq1A_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[1] = ledSeq1A_PD22[1];
+   }
+    if(dataBuf[18]>>3 ==2){
+    tagSeq1B_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[1] = ledSeq1B_PD11[1];
+   }
+    if(dataBuf[18]>>3 ==8){
+    tagSeq1B_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[1] = ledSeq1B_PD22[1];
+   }
+   /////////////////////////////////////
+
+   /////////////////////////////////////
+    if(dataBuf[21]>>3 ==1){
+    tagSeq1A_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD1[1] = ledSeq1A_PD11[1];
+   }
+    if(dataBuf[21]>>3 ==7){
+    tagSeq1A_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1A_PD2[1] = ledSeq1A_PD22[1];
+   }
+    if(dataBuf[21]>>3 ==2){
+    tagSeq1B_PD11[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD11[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD1[1] = ledSeq1B_PD11[1];
+   }
+    if(dataBuf[21]>>3 ==8){
+    tagSeq1B_PD22[1] = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1B_PD22[1] = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+    tab_ledSeq1B_PD2[1] = ledSeq1B_PD22[1];
+   }
+   /////////////////////////////////////
+   
+    /*for (i = 0; i < sample_count/4; i++)
     {   
         if(dataBuf[0]>>3 == 1){
         tagSeq1A_PD11[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
@@ -639,7 +953,7 @@ memset(dataBuf, 0, sample_count*3*sizeof(uint8_t));   // Flush buffer
          }
 
     //samplesTaken1++;
-    }
+    }*/
      //Serial.println("--------");
 
     /*Serial.print("Hz[");
