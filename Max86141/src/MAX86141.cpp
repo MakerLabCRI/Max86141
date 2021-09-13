@@ -352,7 +352,7 @@ uint8_t MAX86141::read_reg(uint8_t address) {
       
       
      // write_reg(REG_PICKET_FENCE,0b11000000);
-        write_reg(REG_PICKET_FENCE,0b00000000);
+        //write_reg(REG_PICKET_FENCE,0b00000000);
       
       //
     // Clear interrupts.
