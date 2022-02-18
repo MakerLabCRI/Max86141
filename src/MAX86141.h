@@ -267,8 +267,6 @@ class MAX86141 {
     int spiClk = 1000000; //8MHz clock on MAX86141 Max, only 200KHz necessary.
     bool debug = false;
     
-    long samplesTaken1 = 0; //Counter for calculating the Hz or read rate
-    long startTime1;
    
     //Buffer to store data for using SNR (Signal to Noise Ratio)   
     int signalData_ledSeq1A_PD1[SIZE],  signalData_ledSeq1A_PD2[SIZE];
@@ -295,7 +293,7 @@ class MAX86141 {
     void setNumbPD(int pd);
     void setLedMode(int *ledMd);
     void setNumLeds(int nb_leds);
-    void setIntensityLed(int intens_led);
+    void setIntensityLed(int intens_led, int *ledMd, int size_led);
     void setSample(int smpl_avr, int smpl_rate);
     void setPulseWidth(int pulse);
     void setADCrange(int adc);
