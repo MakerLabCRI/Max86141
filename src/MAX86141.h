@@ -1,9 +1,21 @@
 #ifndef MAX86141_H
 #define MAX86141_H
-//Modified by Joshua Brewster for Arduino compatibility. Developed on the ESP32, should be compatible with most Arduino boards.
-//I expanded some of the features, improved documentation. More to come. Thank you Michael Lyons for the help getting it to work.
 
-//Found the old code here with the below copyright for the MAX86141 code: https://github.com/jonasgitt/Patient24---Remote-Patient-Monitoring
+
+/*
+*  Modified by Youssouph Ndao for 3 differents types of PPG (2 PhotoDiodes - 1 LED, 1 PhotoDiode - 1 LED, 2 PhotoDiodes - 3 LEDs) 
+*  It can be used with NRF52 boards and Movuino made by Kevin Lhoste (https://github.com/movuino)
+*  To read data, I used software interrupt to detect if FIFO is almost full
+*  Thanks to Joshua Brewster (https://github.com/moothyknight/MAX86141_Arduino) work on which I improved my work
+*/
+
+/*
+*  Modified by Joshua Brewster for Arduino compatibility. Developed on the ESP32, should be compatible with most Arduino boards.
+*  I expanded some of the features, improved documentation. More to come. Thank you Michael Lyons for the help getting it to work.
+*  Found the old code here with the below copyright for the MAX86141 code: https://github.com/jonasgitt/Patient24---Remote-Patient-Monitoring
+*/
+
+
 
 /*******************************************************************************
 * Copyright (C) 2016 Maxim Integrated Products, Inc., All Rights Reserved.
