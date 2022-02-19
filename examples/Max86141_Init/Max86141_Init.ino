@@ -1,14 +1,14 @@
 
 /*
-   Intensity LED  : 0 = 0mA | 255 = 124mA (max)
-   PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
-   Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
-   Led Sequence Control : LED1 (1) // GREEN LED, LED2 (2) //IR LED, LED3 (3) //RED LED, LED1 and LED2 pulsed simultaneously (4),
+   * Intensity LED  : 0 = 0mA | 255 = 124mA (max)
+   * PGG Sample Rate : 0x00 = 24.995 samples per second | 0x13 = 4096 samples per second (max)
+   * Sample Average : 2, 4, 8, 16, 32, 64, 128 samples (max)
+   * Led Sequence Control : LED1 (1) // GREEN LED, LED2 (2) //IR LED, LED3 (3) //RED LED, LED1 and LED2 pulsed simultaneously (4),
    LED1 and LED3 pulsed simultaneously (5), LED2 and LED3 pulsed simultaneously (6), LED1, LED2 and LED3 pulsed simultaneously (7),
    Pilot on LED1 (8), DIRECT AMBIENT (9), LED4 [external mux control] (10), LED5 [external mux control] (11), LED6 [external mux control] (12)
-   DIRECT AMBIENT (i.e. normal photodiode measurements)
-   Sequence Control is up to the configuration you wish (page 14-15 datasheet)
-   PD: PhotoDiode
+   * DIRECT AMBIENT (i.e. normal photodiode measurements)
+   * Sequence Control is up to the configuration you wish (page 14-15 datasheet)
+   * PD: PhotoDiode
 */
 
 #include <MAX86141.h>
@@ -20,7 +20,7 @@
 /* 1 PD - 2 LEDs */
 //#define PDLEDs
 
-/* 2 PDs - 3 LEDs, here  1 LED is composed of "Green, IR and RED" leds */
+/* 2 PDs - 3 LEDs */
 //#define PDsLEDs
 
 /* Sample Rate taken */
@@ -136,8 +136,8 @@ void loop() {
     Serial.println("LED AVERAGE");
     int led_avg = (ledSeq1A_PD1 + ledSeq1A_PD2) * 0.5;
     Serial.println(led_avg);
-
-    ///////////// Addition data of PD1 in buffer to measure SNR (Signal Noise Ratio) //////////
+    
+  ///////////// Addition data of PD1 in buffer to measure SNR (Signal Noise Ratio) //////////
     pulseOx1.signalData_ledSeq1A_PD1[cpt1] = ledSeq1A_PD1;
     cpt1 += 1;
     if (cpt1 == SIZE) {
@@ -145,13 +145,14 @@ void loop() {
       cpt1 = 0;
     }
 
-    ///////////// Addition data of PD1 in buffer to measure SNR (Signal Noise Ratio) //////////
+  ///////////// Addition data of PD2 in buffer to measure SNR (Signal Noise Ratio) //////////
     pulseOx1.signalData_ledSeq1A_PD2[cpt2] = ledSeq1A_PD2;
     cpt2 += 1;
     if (cpt2 == SIZE) {
       Serial.println("SNR (dB): " + String(pulseOx1.signaltonoise(pulseOx1.signalData_ledSeq1A_PD2, SIZE)));
       cpt2 = 0;
     }
+
 
 #ifdef Sample_Rate
     Serial.print("Sample Rate : Hz[");
