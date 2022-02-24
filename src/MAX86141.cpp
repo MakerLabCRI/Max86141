@@ -102,9 +102,7 @@ int MAX86141::getNbPD(){
 int* MAX86141::getLedMode(){
   return ledMode;
 }
-int MAX86141::getNbLeds(){
-  return number_leds;
-}
+
 int MAX86141::getIntensityLed(){
   return intensity_led;
 }
@@ -270,9 +268,6 @@ void MAX86141::setLedMode(int *ledMd){
 }
 }
 
-void MAX86141::setNumLeds(int nb_leds){
-    number_leds = nb_leds;
-}
 
 void MAX86141::setIntensityLed(int intens_led, int* LedMode1){
     intensity_led= intens_led;
@@ -314,7 +309,7 @@ void MAX86141::setIntensityLed(int intens_led, int* LedMode1){
       }
       if(ledMode[0] == 10){
         write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-        write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
+        write_reg(REG_LED_RANGE_2, 0b00000011); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
         write_reg(REG_LED4_PA, intensity_led);
       }
         }
@@ -358,7 +353,7 @@ void MAX86141::setIntensityLed(int intens_led, int* LedMode1){
         }
         if(ledMode[i] == 10){
         write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-        write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
+        write_reg(REG_LED_RANGE_2, 0b00000011); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
         write_reg(REG_LED4_PA, intensity_led);
         }
       }
@@ -402,7 +397,7 @@ void MAX86141::setIntensityLed(int intens_led, int* LedMode1){
         }
         if(ledMode[i] == 10){
           write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-          write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
+          write_reg(REG_LED_RANGE_2, 0b00000011); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
           write_reg(REG_LED4_PA, intensity_led);
         }
       }
@@ -446,7 +441,7 @@ void MAX86141::setIntensityLed(int intens_led, int* LedMode1){
         }
         if(ledMode[i] == 10){
           write_reg(REG_LED_RANGE_1, 0b00000000); // xx,LED3,LED2,LED1. 00,01,10,11 low to high
-          write_reg(REG_LED_RANGE_2, 0b00001111); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
+          write_reg(REG_LED_RANGE_2, 0b00000011); // xx,LED6,LED5,LED4. 00,01,10,11 low to high
           write_reg(REG_LED4_PA, intensity_led);
         }
       }
@@ -477,7 +472,7 @@ void MAX86141::setSample(int smpl_avr, int smpl_rate){
 ///////////////////////////////////////////////
 
 /*inspired by pseudo-code available on MAX86141 datasheet for initialisation*/
-void MAX86141::initialisation(int pd, int *ledMd, int size_led, int nb_leds, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int newSpiClk=10000)
+void MAX86141::initialisation(int pd, int *ledMd, int size_led, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int newSpiClk=10000)
   {
     setSpiClk(newSpiClk);
     uint8_t temp;
@@ -495,7 +490,6 @@ void MAX86141::initialisation(int pd, int *ledMd, int size_led, int nb_leds, int
     write_reg(REG_MODE_CONFIG, 0b00000010); //Low Power mode disabled Shutdown (Register 0x0D[1]),Soft Reset (Register 0x0D[0])
 
     setNumbPD(pd);
-    setNumLeds(nb_leds);
     setLedModeSize(size_led);
     
     /* PPG1 & 2 & 3 */
@@ -617,17 +611,23 @@ for(int i=0; i<sample_count*3;i++){
 //suitable formatting of data for 1 LED control
    if(ledModeSize==1){
 /* Reading of 1 sample for Serial Test */
-    tagSeq1A_PD1 = (dataBuf[0*3+0] >> 3) & 0x1f;
-    ledSeq1A_PD1 = ((dataBuf[0*3+0] << 16) | (dataBuf[0*3+1] << 8) | (dataBuf[0*3+2])) & 0x7ffff;
+    tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+    ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
 
 /* Reading of 8 samples for BLE */
     int i = 0;
     int *tagSeq1A_PD11 = (int*)malloc((sample_count)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count)*sizeof(int));    
+
+/* Checking if data tags are corrects before collecting data.*/
+  if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==1) && (dataBuf[6]>>3 ==1) && (dataBuf[9]>>3 ==1) && (dataBuf[12]>>3 ==1)
+        && (dataBuf[15]>>3 ==1) && (dataBuf[18]>>3 ==1) &&(dataBuf[21]>>3 ==1)
+        )  {  
     for (i = 0; i < sample_count; i++)
     {
       tagSeq1A_PD11[i] = (dataBuf[i*3+0] >> 3) & 0x1f;
       ledSeq1A_PD11[i] = ((dataBuf[i*3+0] << 16) | (dataBuf[i*3+1] << 8) | (dataBuf[i*3+2])) & 0x7ffff;
     }
+  }
 
     free(dataBuf);
     free(tagSeq1A_PD11);
@@ -638,16 +638,20 @@ for(int i=0; i<sample_count*3;i++){
     if(ledModeSize==2){
 
   /* Reading of 1 sample for Serial Test */
-      tagSeq1A_PD1 = (dataBuf[0*6+0] >> 3) & 0x1f;
-      ledSeq1A_PD1 = ((dataBuf[0*6+0] << 16) | (dataBuf[0*6+1] << 8) | (dataBuf[0*6+2])) & 0x7ffff;
-      tagSeq1B_PD1 = (dataBuf[0*6+3] >> 3) & 0x1f;
-      ledSeq1B_PD1 = ((dataBuf[0*6+3] << 16) | (dataBuf[0*6+4] << 8) | (dataBuf[0*6+5])) & 0x7ffff;
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+      tagSeq1B_PD1 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1B_PD1 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
 
   /* Reading of 8 samples for BLE */
       int i = 0;
       int *tagSeq1A_PD11 = (int*)malloc((sample_count/2)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count/2)*sizeof(int));
       int *tagSeq1B_PD11 = (int*)malloc((sample_count/2)*sizeof(int)),*ledSeq1B_PD11 = (int*)malloc((sample_count/2)*sizeof(int));
 
+/* Checking if data tags are corrects before collecting data.*/
+    if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==2) && (dataBuf[6]>>3 ==1) && (dataBuf[9]>>3 ==2) && (dataBuf[12]>>3 ==1)
+        && (dataBuf[15]>>3 ==2) && (dataBuf[18]>>3 ==1) &&(dataBuf[21]>>3 ==2)
+        ) {
       for (i = 0; i < sample_count/2; i++)
       {
         tagSeq1A_PD11[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
@@ -656,6 +660,7 @@ for(int i=0; i<sample_count*3;i++){
         tagSeq1B_PD11[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
         ledSeq1B_PD11[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;
       }
+    }
 
       free(dataBuf);
       free(tagSeq1A_PD11);
@@ -664,16 +669,80 @@ for(int i=0; i<sample_count*3;i++){
       free(ledSeq1B_PD11);
 
     }
+
+    if(ledModeSize==3){
+
+  /* Reading of 1 sample for Serial Test */
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+      tagSeq1B_PD1 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1B_PD1 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
+      tagSeq2A_PD1 = (dataBuf[6] >> 3) & 0x1f;
+      ledSeq2A_PD1 = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
+
+      free(dataBuf);
+
+    }
+
+    if(ledModeSize==4){
+
+  /* Reading of 1 sample for Serial Test */
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+      tagSeq1B_PD1 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1B_PD1 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
+      tagSeq2A_PD1 = (dataBuf[6] >> 3) & 0x1f;
+      ledSeq2A_PD1 = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
+      tagSeq2B_PD1 = (dataBuf[9] >> 3) & 0x1f;
+      ledSeq2B_PD1 = ((dataBuf[9] << 16) | (dataBuf[10] << 8) | (dataBuf[11])) & 0x7ffff;
+
+  /* Reading of 8 samples for BLE */
+      int i = 0;
+      int *tagSeq1A_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count/4)*sizeof(int));
+      int *tagSeq1B_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1B_PD11 = (int*)malloc((sample_count/4)*sizeof(int));
+      int *tagSeq2A_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq2A_PD11 = (int*)malloc((sample_count/4)*sizeof(int));
+      int *tagSeq2B_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq2B_PD11 = (int*)malloc((sample_count/4)*sizeof(int));
+
+/* Checking if data tags are corrects before collecting data.*/
+    if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==2) && (dataBuf[6]>>3 ==3) && (dataBuf[9]>>3 ==4) && (dataBuf[12]>>3 ==1)
+        && (dataBuf[15]>>3 ==2) && (dataBuf[18]>>3 ==3) &&(dataBuf[21]>>3 ==4)
+        ) {
+      for (i = 0; i < sample_count/4; i++)
+      {
+        tagSeq1A_PD11[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
+        ledSeq1A_PD11[i] = ((dataBuf[i*12+0] << 16) | (dataBuf[i*12+1] << 8) | (dataBuf[i*12+2])) & 0x7ffff;
+
+        tagSeq1B_PD11[i] = (dataBuf[i*12+3] >> 3) & 0x1f;
+        ledSeq1B_PD11[i] = ((dataBuf[i*12+3] << 16) | (dataBuf[i*12+4] << 8) | (dataBuf[i*12+5])) & 0x7ffff;
+
+        tagSeq2A_PD11[i] = (dataBuf[0*12+6] >> 3) & 0x1f;
+        ledSeq2A_PD11[i] = ((dataBuf[0*12+6] << 16) | (dataBuf[0*12+7] << 8) | (dataBuf[0*12+8])) & 0x7ffff;
+        
+        tagSeq2B_PD11[i] = (dataBuf[0*12+9] >> 3) & 0x1f;
+        ledSeq2B_PD11[i] = ((dataBuf[0*12+9] << 16) | (dataBuf[0*12+10] << 8) | (dataBuf[0*12+11])) & 0x7ffff;
+      }
+    }
+      free(dataBuf);
+      free(tagSeq1A_PD11);
+      free(ledSeq1A_PD11);
+      free(tagSeq1B_PD11);
+      free(ledSeq1B_PD11);
+      free(tagSeq2A_PD11);
+      free(ledSeq2A_PD11);
+      free(tagSeq2B_PD11);
+      free(ledSeq2B_PD11);
+
+    }
   }
 
     else {
      if(ledModeSize==1){
 
 /* Reading of 1 sample for Serial Test */
-      tagSeq1A_PD1 = (dataBuf[0*6+0] >> 3) & 0x1f;
-      ledSeq1A_PD1 = ((dataBuf[0*6+0] << 16) | (dataBuf[0*6+1] << 8) | (dataBuf[0*6+2])) & 0x7ffff;
-      tagSeq1A_PD2 = (dataBuf[0*6+3] >> 3) & 0x1f;
-      ledSeq1A_PD2 = ((dataBuf[0*6+3] << 16) | (dataBuf[0*6+4] << 8) | (dataBuf[0*6+5])) & 0x7ffff;
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+      tagSeq1A_PD2 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1A_PD2 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
 
 /* Reading of 8 samples for BLE */
       int i = 0;
@@ -683,8 +752,7 @@ for(int i=0; i<sample_count*3;i++){
       tab_ledSeq1A_PD1= (int*)malloc((sample_count/2)*sizeof(int));
       tab_ledSeq1A_PD2= (int*)malloc((sample_count/2)*sizeof(int));
 
-/* Checking if data tags are corrects before collecting data */
-
+/* Checking if data tags are corrects before collecting data. These tags here correspond to Green LED because we are sending green led data by BLE*/
       if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==7) && (dataBuf[6]>>3 ==1) && (dataBuf[9]>>3 ==7) && (dataBuf[12]>>3 ==1)
         && (dataBuf[15]>>3 ==7) && (dataBuf[18]>>3 ==1) &&(dataBuf[21]>>3 ==7)
         ){
@@ -728,26 +796,33 @@ for(int i=0; i<sample_count*3;i++){
 
     //suitable formatting of data for 2 LEDs control
 
-    if(ledModeSize==2){
+    if(ledModeSize==2) {
 
     /* Reading of 1 sample for Serial Test */
-      tagSeq1A_PD1 = (dataBuf[0*12+0] >> 3) & 0x1f;
-      ledSeq1A_PD1 = ((dataBuf[0*12+0] << 16) | (dataBuf[0*12+1] << 8) | (dataBuf[0*12+2])) & 0x7ffff;
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
 
-      tagSeq1A_PD2 = (dataBuf[0*12+3] >> 3) & 0x1f;
-      ledSeq1A_PD2 = ((dataBuf[0*12+3] << 16) | (dataBuf[0*12+4] << 8) | (dataBuf[0*12+5])) & 0x7ffff;
+      tagSeq1A_PD2 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1A_PD2 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
 
-      tagSeq1B_PD1 = (dataBuf[0*12+6] >> 3) & 0x1f;
-      ledSeq1B_PD1 = ((dataBuf[0*12+6] << 16) | (dataBuf[0*12+7] << 8) | (dataBuf[0*12+8])) & 0x7ffff;
+      tagSeq1B_PD1 = (dataBuf[6] >> 3) & 0x1f;
+      ledSeq1B_PD1 = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
 
-      tagSeq1B_PD2 = (dataBuf[0*12+9] >> 3) & 0x1f;
-      ledSeq1B_PD2 = ((dataBuf[0*12+9] << 16) | (dataBuf[0*12+10] << 8)| (dataBuf[0*12+11])) & 0x7ffff;
+      tagSeq1B_PD2 = (dataBuf[9] >> 3) & 0x1f;
+      ledSeq1B_PD2 = ((dataBuf[9] << 16) | (dataBuf[10] << 8)| (dataBuf[11])) & 0x7ffff;
 
     /* Reading of 8 samples for BLE */
       int i = 0;
       int *tagSeq1A_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*tagSeq1B_PD11 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1B_PD11 = (int*)malloc((sample_count/4)*sizeof(int));
       int *tagSeq1A_PD22 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1A_PD22 = (int*)malloc((sample_count/4)*sizeof(int)),*tagSeq1B_PD22 = (int*)malloc((sample_count/4)*sizeof(int)),*ledSeq1B_PD22 = (int*)malloc((sample_count/4)*sizeof(int));
-
+      
+      tab_ledSeq1A_PD1= (int*)malloc((sample_count/4)*sizeof(int));
+      tab_ledSeq1A_PD2= (int*)malloc((sample_count/4)*sizeof(int));
+      
+/* Checking if data tags are corrects before collecting data. These tags here correspond to Green LED and DA because we are sending green led data by BLE*/
+    if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==7) && (dataBuf[6]>>3 ==2) && (dataBuf[9]>>3 ==8) && (dataBuf[12]>>3 ==1)
+        && (dataBuf[15]>>3 ==7) && (dataBuf[18]>>3 ==2) &&(dataBuf[21]>>3 ==8)
+        ) {
       for (i = 0; i < sample_count/4; i++)
       {   
         tagSeq1A_PD11[i] = (dataBuf[i*12+0] >> 3) & 0x1f;
@@ -761,8 +836,11 @@ for(int i=0; i<sample_count*3;i++){
 
         tagSeq1B_PD22[i] = (dataBuf[i*12+9] >> 3) & 0x1f;
         ledSeq1B_PD22[i] = ((dataBuf[i*12+9] << 16) | (dataBuf[i*12+10] << 8)| (dataBuf[i*12+11])) & 0x7ffff;
-      }
 
+        tab_ledSeq1A_PD1[i] = ledSeq1A_PD11[i];
+        tab_ledSeq1A_PD2[i] = ledSeq1A_PD22[i]; 
+      }
+    }
       free(dataBuf);
       free(tagSeq1A_PD11);
       free(ledSeq1A_PD11);
@@ -772,6 +850,117 @@ for(int i=0; i<sample_count*3;i++){
       free(ledSeq1B_PD11);
       free(tagSeq1B_PD22);
       free(ledSeq1B_PD22);
+
+    }
+
+    if(ledModeSize==3) {
+
+    /* Reading of 1 sample for Serial Test */
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+
+      tagSeq1A_PD2 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1A_PD2 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
+
+      tagSeq1B_PD1 = (dataBuf[6] >> 3) & 0x1f;
+      ledSeq1B_PD1 = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
+
+      tagSeq1B_PD2 = (dataBuf[9] >> 3) & 0x1f;
+      ledSeq1B_PD2 = ((dataBuf[9] << 16) | (dataBuf[10] << 8)| (dataBuf[11])) & 0x7ffff;
+
+      tagSeq2A_PD1 = (dataBuf[12] >> 3) & 0x1f;
+      ledSeq2A_PD1 = ((dataBuf[12] << 16) | (dataBuf[13] << 8) | (dataBuf[14])) & 0x7ffff;
+
+      tagSeq2A_PD2 = (dataBuf[15] >> 3) & 0x1f;
+      ledSeq2A_PD2 = ((dataBuf[15] << 16) | (dataBuf[16] << 8)| (dataBuf[17])) & 0x7ffff;
+  
+      free(dataBuf);
+
+    }
+
+    if(ledModeSize==4) {
+
+    /* Reading of 1 sample for Serial Test */
+      tagSeq1A_PD1 = (dataBuf[0] >> 3) & 0x1f;
+      ledSeq1A_PD1 = ((dataBuf[0] << 16) | (dataBuf[1] << 8) | (dataBuf[2])) & 0x7ffff;
+
+      tagSeq1A_PD2 = (dataBuf[3] >> 3) & 0x1f;
+      ledSeq1A_PD2 = ((dataBuf[3] << 16) | (dataBuf[4] << 8) | (dataBuf[5])) & 0x7ffff;
+
+      tagSeq1B_PD1 = (dataBuf[6] >> 3) & 0x1f;
+      ledSeq1B_PD1 = ((dataBuf[6] << 16) | (dataBuf[7] << 8) | (dataBuf[8])) & 0x7ffff;
+
+      tagSeq1B_PD2 = (dataBuf[9] >> 3) & 0x1f;
+      ledSeq1B_PD2 = ((dataBuf[9] << 16) | (dataBuf[10] << 8)| (dataBuf[11])) & 0x7ffff;
+
+      tagSeq2A_PD1 = (dataBuf[12] >> 3) & 0x1f;
+      ledSeq2A_PD1 = ((dataBuf[12] << 16) | (dataBuf[13] << 8) | (dataBuf[14])) & 0x7ffff;
+
+      tagSeq2A_PD2 = (dataBuf[15] >> 3) & 0x1f;
+      ledSeq2A_PD2 = ((dataBuf[15] << 16) | (dataBuf[16] << 8)| (dataBuf[17])) & 0x7ffff;
+
+      tagSeq2B_PD1 = (dataBuf[18] >> 3) & 0x1f;
+      ledSeq2B_PD1 = ((dataBuf[18] << 16) | (dataBuf[19] << 8) | (dataBuf[20])) & 0x7ffff;
+
+      tagSeq2B_PD2 = (dataBuf[21] >> 3) & 0x1f;
+      ledSeq2B_PD2 = ((dataBuf[21] << 16) | (dataBuf[22] << 8)| (dataBuf[23])) & 0x7ffff;
+
+    /* Reading of 8 samples for BLE */
+      int i = 0;
+      int *tagSeq1A_PD11 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count/8)*sizeof(int)),*tagSeq1B_PD11 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq1B_PD11 = (int*)malloc((sample_count/8)*sizeof(int));
+      int *tagSeq1A_PD22 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq1A_PD22 = (int*)malloc((sample_count/8)*sizeof(int)),*tagSeq1B_PD22 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq1B_PD22 = (int*)malloc((sample_count/8)*sizeof(int));
+      int *tagSeq2A_PD11 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq2A_PD11 = (int*)malloc((sample_count/8)*sizeof(int)),*tagSeq2B_PD11 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq2B_PD11 = (int*)malloc((sample_count/8)*sizeof(int));
+      int *tagSeq2A_PD22 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq2A_PD22 = (int*)malloc((sample_count/8)*sizeof(int)),*tagSeq2B_PD22 = (int*)malloc((sample_count/8)*sizeof(int)),*ledSeq2B_PD22 = (int*)malloc((sample_count/8)*sizeof(int));
+
+/* Checking if data tags are corrects before collecting data. These tags here correspond to Green LED and DA because we are sending green led data by BLE*/
+    if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==7) && (dataBuf[6]>>3 ==2) && (dataBuf[9]>>3 ==8) && (dataBuf[12]>>3 ==3)
+        && (dataBuf[15]>>3 ==9) && (dataBuf[18]>>3 ==4) &&(dataBuf[21]>>3 ==10)
+        ) {
+      for (i = 0; i < sample_count/8; i++)
+      {   
+        tagSeq1A_PD11[i] = (dataBuf[i*24+0] >> 3) & 0x1f;
+        ledSeq1A_PD11[i] = ((dataBuf[i*24+0] << 16) | (dataBuf[i*24+1] << 8) | (dataBuf[i*24+2])) & 0x7ffff;
+
+        tagSeq1A_PD22[i] = (dataBuf[i*24+3] >> 3) & 0x1f;
+        ledSeq1A_PD22[i] = ((dataBuf[i*24+3] << 16) | (dataBuf[i*24+4] << 8) | (dataBuf[i*24+5])) & 0x7ffff;
+
+        tagSeq1B_PD11[i] = (dataBuf[i*24+6] >> 3) & 0x1f;
+        ledSeq1B_PD11[i] = ((dataBuf[i*24+6] << 16) | (dataBuf[i*24+7] << 8) | (dataBuf[i*24+8])) & 0x7ffff;
+
+        tagSeq1B_PD22[i] = (dataBuf[i*24+9] >> 3) & 0x1f;
+        ledSeq1B_PD22[i] = ((dataBuf[i*24+9] << 16) | (dataBuf[i*24+10] << 8)| (dataBuf[i*24+11])) & 0x7ffff;
+
+        tagSeq2A_PD11[i] = (dataBuf[i*24+12] >> 3) & 0x1f;
+        ledSeq2A_PD11[i] = ((dataBuf[i*24+12] << 16) | (dataBuf[i*24+13] << 8)| (dataBuf[i*24+14])) & 0x7ffff;
+
+        tagSeq2A_PD22[i] = (dataBuf[i*24+15] >> 3) & 0x1f;
+        ledSeq2A_PD22[i] = ((dataBuf[i*24+15] << 16) | (dataBuf[i*24+16] << 8)| (dataBuf[i*24+17])) & 0x7ffff;
+
+        tagSeq2B_PD11[i] = (dataBuf[i*24+18] >> 3) & 0x1f;
+        ledSeq2B_PD11[i] = ((dataBuf[i*24+18] << 16) | (dataBuf[i*24+19] << 8)| (dataBuf[i*24+20])) & 0x7ffff;
+
+        tagSeq2B_PD22[i] = (dataBuf[i*24+21] >> 3) & 0x1f;
+        ledSeq2B_PD22[i] = ((dataBuf[i*24+21] << 16) | (dataBuf[i*24+22] << 8)| (dataBuf[i*24+23])) & 0x7ffff;
+
+      }
+    }
+      free(dataBuf);
+      free(tagSeq1A_PD11);
+      free(ledSeq1A_PD11);
+      free(tagSeq1A_PD22);
+      free(ledSeq1A_PD22);
+      free(tagSeq1B_PD11);
+      free(ledSeq1B_PD11);
+      free(tagSeq1B_PD22);
+      free(ledSeq1B_PD22);
+      free(tagSeq2A_PD11);
+      free(ledSeq2A_PD11);
+      free(tagSeq2A_PD22);
+      free(ledSeq2A_PD22);
+      free(tagSeq2B_PD11);
+      free(ledSeq2B_PD11);
+      free(tagSeq2B_PD22);
+      free(ledSeq2B_PD22);
 
     }
       }
