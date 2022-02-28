@@ -13,8 +13,8 @@
         "url": "https://github.com/Youniesta",
         "maintainer": true
     },
-    "version": "1.0.0",
+    "version": "1.0.2",
     "license": "MIT",
     "frameworks": "arduino",
-    "platforms": "*"
+    "platforms": "nrf52"
 }
