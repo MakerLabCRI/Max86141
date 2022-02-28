@@ -272,7 +272,7 @@ class MAX86141 {
 
   public:
 
- void initialisation(int pd, int *ledMd, int size_led, int nb_leds, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int spiClk);
+ void initialisation(int pd, int *ledMd, int size_led, int intens_led, int smpl_avr, int smpl_rate, int pulse, int adc, int spiClk);
     //THESE NEED TO BE SET UP MANUALLY
     SPIClass * spi = NULL;
     int SS;
@@ -304,7 +304,6 @@ class MAX86141 {
     /* SETs */
     void setNumbPD(int pd);
     void setLedMode(int *ledMd);
-    void setNumLeds(int nb_leds);
     void setIntensityLed(int intens_led, int* LedMode1);
     void setSample(int smpl_avr, int smpl_rate);
     void setPulseWidth(int pulse);
@@ -315,7 +314,6 @@ class MAX86141 {
     int getledModeSize();
     int getNbPD();
     int* getLedMode();
-    int getNbLeds();
     int getIntensityLed();
     int getSample_average();
     int getSample_rate();
@@ -348,6 +346,7 @@ class MAX86141 {
     int get_ledSeq3B_PD2();
     int get_tagSeq3B_PD2();
     
+    // Save data in tab to send them after by BLE
     int *tab_ledSeq1A_PD1= NULL, *tab_ledSeq1B_PD1= NULL;
     int *tab_ledSeq1A_PD2= NULL, *tab_ledSeq1B_PD2= NULL;
     private :
