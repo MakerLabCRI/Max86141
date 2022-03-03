@@ -647,7 +647,8 @@ for(int i=0; i<sample_count*3;i++){
       int i = 0;
       int *tagSeq1A_PD11 = (int*)malloc((sample_count/2)*sizeof(int)),*ledSeq1A_PD11 = (int*)malloc((sample_count/2)*sizeof(int));
       int *tagSeq1B_PD11 = (int*)malloc((sample_count/2)*sizeof(int)),*ledSeq1B_PD11 = (int*)malloc((sample_count/2)*sizeof(int));
-
+      tab_ledSeq1A_PD1 = (int*)malloc((sample_count/2)*sizeof(int));
+      
 /* Checking if data tags are corrects before collecting data.*/
     if( (dataBuf[0]>>3 ==1) && (dataBuf[3]>>3 ==2) && (dataBuf[6]>>3 ==1) && (dataBuf[9]>>3 ==2) && (dataBuf[12]>>3 ==1)
         && (dataBuf[15]>>3 ==2) && (dataBuf[18]>>3 ==1) &&(dataBuf[21]>>3 ==2)
@@ -656,6 +657,8 @@ for(int i=0; i<sample_count*3;i++){
       {
         tagSeq1A_PD11[i] = (dataBuf[i*6+0] >> 3) & 0x1f;
         ledSeq1A_PD11[i] = ((dataBuf[i*6+0] << 16) | (dataBuf[i*6+1] << 8) | (dataBuf[i*6+2])) & 0x7ffff;
+        
+        tab_ledSeq1A_PD1[i] = ledSeq1A_PD11[i];
 
         tagSeq1B_PD11[i] = (dataBuf[i*6+3] >> 3) & 0x1f;
         ledSeq1B_PD11[i] = ((dataBuf[i*6+3] << 16) | (dataBuf[i*6+4] << 8) | (dataBuf[i*6+5])) & 0x7ffff;

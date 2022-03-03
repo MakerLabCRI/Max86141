@@ -72,17 +72,17 @@ void setup() {
   pulseOx1.setDebug(true);
 
 #ifdef PDsLED
-  sequences_size = config(LED_G /*Green LED selected (Sequence 1A, 0-3)*/ | LED_IR /*IR LED (Sequence 1B, 4-9)*/ | LED_R/*RED LED (Sequence 2A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
+  sequences_size = config(rgbLED_G /*Green LED selected (Sequence 1A, 0-3)*/ | rgbLED_IR /*IR LED (Sequence 1B, 4-9)*/ | rgbLED_R/*RED LED (Sequence 2A, 0-3)*/ | DA /*Direct Ambient (Sequence 2B, 4-9)*/);
   pulseOx1.initialisation(2/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x00/*sample_average*/, 0xE/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDLEDs
-  sequences_size = config(LED_2G/* 2 Green LED (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 1B, 4-9)*/);
+  sequences_size = config(LED_G/*Green LED (Sequence 1A, 0-3)*/ | LED_G/*Green LED (Sequence 1B, 4-9)*/ | DA /*Direct Ambient (Sequence 22A, 0-3)*/);
   pulseOx1.initialisation(1/*nb_pds*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 1/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x3/*ADC Range= 16uA*/, spiClk);
 #endif
 
 #ifdef PDsLEDs
-  sequences_size = config(LED_G_R_IR /*Green LED, RED LED and IR LED selected simultaneously (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 1B, 4-9)*/);
+  sequences_size = config(rgbLED_G_R_IR /*Green LED, RED LED and IR LED selected simultaneously (Sequence 1A, 0-3)*/ | DA /*Direct Ambient (Sequence 1B, 4-9)*/);
   pulseOx1.initialisation(2/*nb_ppg*/, ledMode/*LedMode*/, sequences_size/*Number of sequences*/, 10/*intensity_LEDs*/, 0x3/*sample_average*/, 0x0E/*sample_rate*/, 0x3/*pulse width*/, 0x2/*ADC Range= 16uA*/, spiClk);
 #endif
 
